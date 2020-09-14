@@ -28,7 +28,7 @@ Write a short description what your demos is about. If possible provide an schem
 ### Backend entry point functions
 
 [python/backend.py](backend.py) implements the basic resp api functionalities:
-* It uses cherrypy to enable hhtp resp api protocol
+* It uses cherrypy to enable the http resp api protocol
 ```
 import cherrypy
 ```
