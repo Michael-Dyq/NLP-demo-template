@@ -23,9 +23,9 @@ in  the following sections we provide guidance on how to disign and create a NLP
 ### Describe your demo
 Write a short description what your demos is about. If possible provide an schematic diagram to show how end-to-end compnents are integrated.
 
-```
+**_
 This template example demonstrates how to compose back- and front-end components in order to build an NLP Demo. Our example uses spiCy to performs Named Entity Recognition (NER) over a piece of text (English only).
-```
+_**
 
 
 ## Final deployment checklist
