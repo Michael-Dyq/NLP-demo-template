@@ -20,11 +20,14 @@ Your final README must include:
 ## Step-by-step
 in  the following sections we provide guidance on how to disign and create a NLP demo.
 
-### Describe your demo
+1. Describe your demo
 Write a short description what your demos is about. If possible provide an schematic diagram to show how end-to-end compnents are integrated.
 
 **_This template example demonstrates how to compose back- and front-end components in order to build an NLP Demo. Our example uses spiCy to performs Named Entity Recognition (NER) over a piece of text (English only)._**
 
+1. Backend entry point functions
+
+1. UI
 
 ## Final deployment checklist
 Check whether you have accomplished the expected GitHub requirements before making your code publicly available.
