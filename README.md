@@ -17,8 +17,15 @@ Your final README must include:
 * Datasets - if your code requires specific datasets that are not being provided as part of your repository, please make it clear how to download them and where exactly they should reside.
 
 
-### Step-by-step
+## Step-by-step
 in  the following sections we provide guidance on how to disign and create a NLP demo.
+
+### Describe your demo
+Write a short description what your demos is about. If possible provide an schematic diagram to show how end-to-end compnents are integrated.
+
+'''
+This template example demonstrates how to compose back- and front-end components in order to build an NLP Demo. Our example uses spiCy to performs Named Entity Recognition (NER) over a piece of text (English only).
+'''
 
 
 ## Final deployment checklist
