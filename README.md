@@ -4,8 +4,22 @@ NLP demo: backend and web application template
 ## Goal
 We aim to provide guidance on how to disign and create a NLP demos for your research work.
 
-## Step-by-step
-Provide guidance on how to disign and create a NLP demo.
+## Overall guidelines
+* Make sure your code is organized and documented
+* Do not include absolute paths to CCG servers within your code; instead, use ENV variables or CONFIG setup files
+
+## README file
+Your final README must include:
+* A brief description of your system
+* Requirements in order to make it run (e.g. Python packages and specific versions)
+* Detailed installation instructions and setup
+* Running instructions and how to interpret results (make sure that your code is reproducing the same results reported in your paper)
+* Datasets - if your code requires specific datasets that are not being provided as part of your repository, please make it clear how to download them and where exactly they should reside.
+
+
+### Step-by-step
+in  the following sections we provide guidance on how to disign and create a NLP demo.
+
 
 ## Final deployment checklist
 Check whether you have accomplished the expected GitHub requirements before making your code publicly available.
