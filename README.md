@@ -6,7 +6,7 @@ We aim to provide guidance on how to disign and create a NLP demos for your rese
 
 ## Overall guidelines
 * Make sure your code is organized and documented
-* Do not include absolute paths to CCG servers within your code; instead, use env variables or config setup files
+* Do not include absolute paths within your code; instead, use env variables or config setup files as much as possible
 
 ## README file
 Your final README must include:
