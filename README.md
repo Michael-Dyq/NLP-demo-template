@@ -52,3 +52,11 @@ Check whether you have accomplished the expected GitHub requirements before maki
 * Is the resulting output from single entry processing clearly documented?
 
 
+## Docker
+If you want to make your demo available using Docker, folow the instructions below:
+
+1. Write a Dockerfile for each sevice that you want to make available: eventually can have distinct rest services running in different ports, and make all backend services independent regarding the UI.
+2. Make sure you have all the required Python packages added to your Docker image
+3. Use a docker-compose file to connect all services and interfaces, reassign ports, and make large files available.
+
+
