@@ -2,7 +2,7 @@
 NLP demo: backend and web application template
 
 ## Goal
-Provide guidance on how to disign and create a NLP demo.
+We aim to provide guidance on how to disign and create a NLP demos for your research work.
 
 ## Step-by-step
 Provide guidance on how to disign and create a NLP demo.
