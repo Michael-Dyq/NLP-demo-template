@@ -34,7 +34,7 @@ def outputToJSON(string):
         "result": annotation_res
     }
 
-    return json.dumps(json_output)
+    return json_output
 
 class Annotation(object):
     @cherrypy.expose
