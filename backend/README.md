@@ -5,7 +5,8 @@ We will use the PoS Tagging service of Spacy as an example
 
 # How to Run it
 
-Run "!python backend_cherry.py" and visit http://localhost:8081. You may change the port number.
+1) Run "python backend_cherry.py" in your terminal 
+2) visit http://localhost:8081.
 
 # How to Curl the Data
 
