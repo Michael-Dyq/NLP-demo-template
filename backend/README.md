@@ -1,22 +1,47 @@
 # Backend Design
 
-We will use the PoS Tagging service of Spacy as an example
+These scripts will demonstrate how to build a backend service with Python. We use the PoS Tagging service of Spacy and NER as an example.
 
+## Setup the Environment
 
-# How to Run it
+### Set up miniconda
+curl -LO http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+bash Miniconda-latest-Linux-x86_64.sh -p /shared/yiwent/miniconda -b
+export  PATH=/shared/yiwent/miniconda/bin:${PATH}
+conda update -y conda
 
-1) Run "python backend_cherry.py" in your terminal 
-2) visit http://localhost:8081.
+### Add the Path to the Environment Variable
+export  PATH=/shared/yiwent/miniconda/bin:${PATH}
 
-# How to Curl the Data
+### Install the Packages your Program Requires 
+conda create -n ENV_NAME_HERE python=3.6
+source activate ENV_NAME_HERE
+pip install ...
 
-## For Windows
+In our case, we need to install the following packages and model:
+pip install spacy
+pip install cherrypy
+python -m spacy download en_core_web_sm
 
-### JSON input:
-curl.exe -H "Content-Type: application/json" -X POST http://localhost:8081/json -d "{"text":"I love cat"}"
+## How to Run it
+Run "python backend_cherry.py" in your terminal. The service is currently running on dickens:4033 and dickens:4034. You may alter the port number based on your need.
 
-### String input:
-curl.exe -d 'text=I+like+sushi' http://localhost:8081/anns
+url_pos = 'http://dickens.seas.upenn.edu:4034/pos'
+url_ner = 'http://dickens.seas.upenn.edu:4033/ner'
+
+## How to Retrieve the Output
+
+## Via Submitting Post Request on Python
+
+Run python api_post_request_f.py
+
+This script use an example string of 'Barack Obama is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017.', and calls two backend services mentioned above.
+
+## Via Parameters:
+
+We can also pass in the parameter directly in URL. In this case, we pass in a parameter called text, which is the string "I like sushi".
+
+curl http://dickens.seas.upenn.edu:4034/pos?text=I+like+sushi
 
 # How to Make your Own Demo
 ## Step 1: Load the Model
@@ -30,7 +55,7 @@ r = model(text)
 
 ## Step 2: Figure out the format of Input (String v.s. JSON)
 
-If you would like your service to take both kinds of inputs. You should design two separate paths for string and json
+If you would like your service to take both kinds of inputs. You should implement the same path for both string and json. 
 
 ## Step 3: Return the output as a JSON document
 
