@@ -34,4 +34,4 @@ res = {
 
 
 # Print the response text (the content of the requested file):
-print(output_pos.json())
+print(res)
