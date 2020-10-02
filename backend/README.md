@@ -5,26 +5,39 @@ These scripts will demonstrate how to build a backend service with Python. We us
 ## Setup the Environment
 
 ### Set up miniconda
+
+```linux
 curl -LO http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
 bash Miniconda-latest-Linux-x86_64.sh -p /shared/yiwent/miniconda -b
 export  PATH=/shared/yiwent/miniconda/bin:${PATH}
 conda update -y conda
+```
 
 ### Add the Path to the Environment Variable
+```linux
 export  PATH=/shared/yiwent/miniconda/bin:${PATH}
+```
 
 ### Install the Packages your Program Requires 
+```linux
 conda create -n ENV_NAME_HERE python=3.6
 source activate ENV_NAME_HERE
 pip install ...
-
+```
 In our case, we need to install the following packages and model:
+
+```linux
 pip install spacy
 pip install cherrypy
 python -m spacy download en_core_web_sm
+```
 
 ## How to Run it
-Run "python backend_cherry.py" in your terminal. The service is currently running on dickens:4033 and dickens:4034. You may alter the port number based on your need.
+Run the command in your terminal. The service is currently running on dickens:4033 and dickens:4034. You may alter the port number based on your need.
+
+ ```python
+ python backend_cherry.py
+ ```
 
 url_pos = 'http://dickens.seas.upenn.edu:4034/pos'
 url_ner = 'http://dickens.seas.upenn.edu:4033/ner'
@@ -33,7 +46,9 @@ url_ner = 'http://dickens.seas.upenn.edu:4033/ner'
 
 ## Via Submitting Post Request on Python
 
-Run python api_post_request_f.py
+```python
+python api_post_request_f.py
+```
 
 This script use an example string of 'Barack Obama is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017.', and calls two backend services mentioned above.
 
@@ -45,13 +60,16 @@ curl http://dickens.seas.upenn.edu:4034/pos?text=I+like+sushi
 
 # How to Make your Own Demo
 ## Step 1: Load the Model
-
+```linux
 for Spacy we have the following:
 !python -m spacy download en_core_web_sm
+```
 
+```python
 import spacy
 model = spacy.load("en_core_web_sm")
 r = model(text)
+```
 
 ## Step 2: Figure out the format of Input (String v.s. JSON)
 
