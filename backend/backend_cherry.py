@@ -88,7 +88,8 @@ if __name__ == '__main__':
     cherrypy.config.update(config)
 
     # Update the configuration to your localhost:8081
-    cherrypy.config.update({'server.socket_port': 8081})
+    #cherrypy.config.update({'server.socket_port': 8081})
+    cherrypy.config.update({'server.socket_host': 'dickens.seas.upenn.edu', 'server.socket_port': 4034, 'cors.expose.on': True})
 
     # Start the service
     cherrypy.quickstart(Annotation(), '/')

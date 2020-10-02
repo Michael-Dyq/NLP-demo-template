@@ -6,7 +6,7 @@ import requests
 import json
 
 # The target URL where we send to request to
-url = 'http://localhost:8081/pos'
+url = 'http://dickens.seas.upenn.edu:4034/pos'
 
 # The parameters we wish to send
 myobj = {

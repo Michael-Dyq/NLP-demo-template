@@ -6,7 +6,7 @@ import requests
 import json
 
 # The target URL where we send to request to
-url_pos = 'http://localhost:8081/pos'
+url_pos = 'http://dickens.seas.upenn.edu:4034/pos'
 url_ner = 'http://dickens.seas.upenn.edu:4033/ner'
 
 # The parameters we wish to send
