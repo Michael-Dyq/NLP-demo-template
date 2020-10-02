@@ -32,6 +32,5 @@ res = {
     "ner_anns" : output_ner.json()
 }
 
-
 # Print the response text (the content of the requested file):
-print(res)
+print(json.dumps(res))
