@@ -48,7 +48,7 @@ class Annotation(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def pos(self):
+    def pos(self, **params):
         # CherryPy passes all GET and POST variables as method parameters.
         # It doesn't make a difference where the variables come from, how
         # large their contents are, and so on.
@@ -56,7 +56,6 @@ class Annotation(object):
         # You can define default parameter values as usual. In this
         # example, the "name" parameter defaults to None so we can check
         # if a name was actually specified.
-        cherrypy.response.headers['Content-Type'] = 'application/json'
 
         try:
             data = cherrypy.request.json
@@ -65,6 +64,7 @@ class Annotation(object):
 
         except:
             data = cherrypy.request.params
+            print(data)
             useJSON=False
             print("\nReading Parameters from the URL")
 
