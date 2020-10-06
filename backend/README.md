@@ -56,6 +56,14 @@ This script use an example string of 'Barack Obama is an American politician and
 python api_post_request.py
 ```
 
+## Via Submitting Post Request with cURL
+
+Similar to previous method, we can also use curl command to pass a input JSON to the API. Please note that -d indicates the data, -H refers to the header and -X represents the type of requests. 
+
+```linux
+curl -d '{"text":"Barack Obama is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017."}' -H 'Content-Type: application/json' -X POST http://dickens.seas.upenn.edu:8099/anns
+```
+
 ## Via Parameters:
 
 We can also pass in the parameter directly in URL. In this case, we pass in a parameter called text. You need to modify the port number and urls based on where your service is running.
