@@ -56,7 +56,7 @@ This script use an example string of 'Barack Obama is an American politician and
 
 We can also pass in the parameter directly in URL. In this case, we pass in a parameter called text.
 
-http://dickens.seas.upenn.edu:4034/pos?text=Barack%20Obama%20is%20an%20American%20politician%20and%20attorney%20who%20served%20as%20the%2044th%20president%20of%20the%20United%20States%20from%202009%20to%202017.
+http://dickens.seas.upenn.edu:8099/anns?text=Barack%20Obama%20is%20an%20American%20politician%20and%20attorney%20who%20served%20as%20the%2044th%20president%20of%20the%20United%20States%20from%202009%20to%202017.
 
 # How to Make your Own Demo
 ## Step 1: Load the Model
