@@ -64,7 +64,7 @@ We can also pass in the parameter directly in URL. In this case, we pass in a pa
 curl http://dickens.seas.upenn.edu:8099/anns?text=Barack%20Obama%20is%20an%20American%20politician%20and%20attorney%20who%20served%20as%20the%2044th%20president%20of%20the%20United%20States%20from%202009%20to%202017.
 ```
 
-# Important places you need to Modify for your Demo
+# Important Places you may Need to Modify for your Demo
 
 ## Step 1: Load your Model
 Please load your model for annotations. For this template, we implements PoS and NER services from Spacy
