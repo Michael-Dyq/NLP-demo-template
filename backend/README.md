@@ -81,5 +81,9 @@ model = spacy.load("en_core_web_sm")
 r = model(text)
 ```
 
-## Step 2: Change the Ports and Urls for the Post Request and Backend Service Script
+## Step 2: Modify the outputToJSON function
+
+Please modify the outputToJSON function based on the behavior of your model. Your functions should contain more functionalities, including data validation, data pre-processing and/or other features.
+
+## Step 3: Change the Ports and Urls for the Post Request and Backend Service Script
 In this demo, we use the dickens:8099 port. You should choose another available port and modify it. Moreover, the corresponding url for the backend service should be updated as well. We use **http://dickens.seas.upenn.edu:8099/anns** in our case.
