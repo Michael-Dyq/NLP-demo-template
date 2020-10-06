@@ -4,7 +4,7 @@ These scripts will demonstrate how to build a backend service with Python. We us
 
 ## Setup the Environment
 
-### Set up miniconda
+### Set up Miniconda
 
 ```linux
 curl -LO http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
@@ -18,13 +18,17 @@ conda update -y conda
 export  PATH=/shared/yiwent/miniconda/bin:${PATH}
 ```
 
-### Install the Packages your Program Requires 
+### Install the Packages your Program Requires
+
+Please use the following commands to install the required packages.
 ```linux
 conda create -n ENV_NAME_HERE python=3.6
 source activate ENV_NAME_HERE
 pip install ...
 ```
-In our case, we need to install the following packages and model:
+
+Please download and install your model to the packages.
+In our template, we need to install the following packages and model.
 
 ```linux
 pip install spacy
@@ -39,29 +43,35 @@ Run the command in your terminal. The service is currently running on dickens:40
  python backend_cherry.py
  ```
 
-url_pos = 'http://dickens.seas.upenn.edu:4034/pos'
-url_ner = 'http://dickens.seas.upenn.edu:4033/ner'
+url = 'http://dickens.seas.upenn.edu:8099/anns'
+
 
 ## How to Retrieve the Output
 
 ## Via Submitting Post Request on Python
 
-```python
-python api_post_request_pos.py
-```
+This script use an example string of 'Barack Obama is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017.', and calls two backend services mentioned above. You need to modify the port number and urls based on where your service is running.
 
-This script use an example string of 'Barack Obama is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017.', and calls two backend services mentioned above.
+```python
+python api_post_request.py
+```
 
 ## Via Parameters:
 
-We can also pass in the parameter directly in URL. In this case, we pass in a parameter called text.
+We can also pass in the parameter directly in URL. In this case, we pass in a parameter called text. You need to modify the port number and urls based on where your service is running.
 
-http://dickens.seas.upenn.edu:8099/anns?text=Barack%20Obama%20is%20an%20American%20politician%20and%20attorney%20who%20served%20as%20the%2044th%20president%20of%20the%20United%20States%20from%202009%20to%202017.
-
-# How to Make your Own Demo
-## Step 1: Load the Model
 ```linux
-for Spacy we have the following:
+curl http://dickens.seas.upenn.edu:8099/anns?text=Barack%20Obama%20is%20an%20American%20politician%20and%20attorney%20who%20served%20as%20the%2044th%20president%20of%20the%20United%20States%20from%202009%20to%202017.
+```
+
+# Important places you need to Modify for your Demo
+
+## Step 1: Load your Model
+Please load your model for annotations. For this template, we implements PoS and NER services from Spacy
+
+for Spacy we implement the following script for installing and loading the model:
+
+```linux
 !python -m spacy download en_core_web_sm
 ```
 
@@ -71,24 +81,5 @@ model = spacy.load("en_core_web_sm")
 r = model(text)
 ```
 
-## Step 2: Figure out the format of Input (String v.s. JSON)
-
-If you would like your service to take both kinds of inputs. You should implement the same path for both string and json. 
-
-## Step 3: Return the output as a JSON document
-
-Once we finish annotating the text, we want to load the output in a JSON document and return it
-
-
-# Reference:
-
--CherryPy Backend Example
-
-https://github.com/jinruiyang/zeroshotdemo
-
--AllenNLP (Not Supported on Window)
-
-from allennlp.predictors.predictor import Predictor
-SRL2019 = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz")
-
-r2 = SRL2019.predict(text)
+## Step 2: Change the Ports and Urls for the Post Request and Backend Service Script
+In this demo, we use the dickens:8099 port. You should choose another available port and modify it. Moreover, the corresponding url for the backend service should be updated as well. We use **http://dickens.seas.upenn.edu:8099/anns** in our case.
