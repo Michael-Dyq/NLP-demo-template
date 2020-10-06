@@ -24,17 +24,25 @@ def outputToJSON(data):
 
     string = data['text']
     
-    # Annotate the input
+    # Annotate the Input
     docs = model(string)
 
-    # Create the JSON Output
-    annotation_res = {}
+    # Complete the JSON Output
+    annotation_pos = {}
+    annotation_ner = {}
 
+    # Load in PoS Annotations
     for token in docs:
-        annotation_res[token.text] = token.pos_
+        annotation_pos[token.text] = token.pos_
+
+    # Load in NER Annotations
+    for token in docs:
+        annotation_ner[token.text] = token.ent_type_  
 
     json_output = {
-        "result": annotation_res
+        "PoS": annotation_pos,
+        "NER": annotation_ner
+
     }
 
     return json_output
@@ -48,7 +56,7 @@ class Annotation(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def pos(self, **params):
+    def anns(self, **params):
         # CherryPy passes all GET and POST variables as method parameters.
         # It doesn't make a difference where the variables come from, how
         # large their contents are, and so on.
@@ -89,7 +97,7 @@ if __name__ == '__main__':
 
     # Update the configuration to your localhost:8081
     #cherrypy.config.update({'server.socket_port': 8081})
-    cherrypy.config.update({'server.socket_host': 'dickens.seas.upenn.edu', 'server.socket_port': 4034, 'cors.expose.on': True})
+    cherrypy.config.update({'server.socket_host': 'dickens.seas.upenn.edu', 'server.socket_port': 8099, 'cors.expose.on': True})
 
     # Start the service
     cherrypy.quickstart(Annotation(), '/')
