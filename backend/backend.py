@@ -5,10 +5,6 @@ from typing import Text
 import cherrypy
 import spacy
 
-
-#Remove
-#json_input =  
-
 # Load your annotation model here
 model = spacy.load("en_core_web_sm")
 
