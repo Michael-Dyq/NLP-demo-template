@@ -40,7 +40,7 @@ python -m spacy download en_core_web_sm
 Run the command in your terminal. The service is currently running on dickens:4033 and dickens:4034. You may alter the port number based on your need.
 
  ```python
- python backend_cherry.py
+ python backend.py
  ```
 
 url = 'http://dickens.seas.upenn.edu:8099/anns'
@@ -54,6 +54,14 @@ This script use an example string of 'Barack Obama is an American politician and
 
 ```python
 python api_post_request.py
+```
+
+## Via Submitting Post Request with cURL
+
+Similar to previous method, we can also use curl command to pass a input JSON to the API. Please note that -d indicates the data, -H refers to the header and -X represents the type of requests. 
+
+```linux
+curl -d '{"text":"Barack Obama is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017."}' -H 'Content-Type: application/json' -X POST http://dickens.seas.upenn.edu:8099/anns
 ```
 
 ## Via Parameters:
