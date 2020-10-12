@@ -40,7 +40,7 @@ python -m spacy download en_core_web_sm
 Run the command in your terminal. The service is currently running on dickens:4033 and dickens:4034. You may alter the port number based on your need.
 
  ```python
- python backend_cherry.py
+ python backend.py
  ```
 
 url = 'http://dickens.seas.upenn.edu:8099/anns'
