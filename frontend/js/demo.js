@@ -293,7 +293,7 @@ function newLanguageSelect() {
  * @abstract update the examples when a new language is chosen
  * @yield {NULL}
  */
-async function postData(url='http://localhost:8081/anns', data_json={}, pfunction) {
+async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json={}, pfunction) {
     console.log("input: " + JSON.stringify(data_json))
     fetch(url, {
         method: 'POST',
@@ -336,7 +336,7 @@ function runAnnotation() {
     fText = document.getElementById("text").value;
     data = '{ "text" : "' + fText +  '" }';
     
-    url="http://localhost:8081/anns";
+    url="http://dickens.seas.upenn.edu:4049/anns";
     postData(url, JSON.parse(data), outputXEL);
 }
 

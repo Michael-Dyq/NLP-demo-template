@@ -46,7 +46,6 @@ def outputToJSON(data):
 class Annotation(object):
     @cherrypy.expose
     def index(self):
-        print("Currently not available")
         return open('../frontend/index.html')
 
     @cherrypy.expose
@@ -91,10 +90,9 @@ if __name__ == '__main__':
     config = {'server.socket_host': '0.0.0.0'}
     cherrypy.config.update(config)
 
-    # Update the configuration to your localhost:8081
-    cherrypy.config.update({'server.socket_port': 8081})
-    #cherrypy.config.update({'server.socket_host': 'dickens.seas.upenn.edu', 'server.socket_port': 8099, 'cors.expose.on': True})
-    print(os.path.abspath(os.getcwd()))
+    # Update the configuration to your host
+    # cherrypy.config.update({'server.socket_port': 8081})
+    cherrypy.config.update({'server.socket_host': 'dickens.seas.upenn.edu', 'server.socket_port': 4049})
     conf = {
         '/': {
             'tools.sessions.on': True,
