@@ -6,7 +6,7 @@ The front end design usually consists of three parts: HTML, CSS, and JavaScript.
 
 ### HTML
 
-HTML stands for Hyper Text Markup Language and is the standard markup language for creating Web pages. HTML document is made of a series of HTML elements. HTML elements tell the browser how to display the content. For instance, HTML elements label pieces of content such as "this is a heading", "this is a paragraph", "this is a link", etc. You may refer to the [HTML file](frontend/js/demo.js)
+HTML stands for Hyper Text Markup Language and is the standard markup language for creating Web pages. HTML document is made of a series of HTML elements. HTML elements tell the browser how to display the content. For instance, HTML elements label pieces of content such as "this is a heading", "this is a paragraph", "this is a link", etc. You may refer to the [HTML file](index.html) and take a look how the elements are arranged in the document.
 
 ### CSS
 
