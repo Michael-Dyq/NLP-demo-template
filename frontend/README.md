@@ -16,7 +16,7 @@ External Material: https://www.w3schools.com/html/html_intro.asp
 
 CSS stands for Cascading Style Sheets. CSS describes how HTML elements are to be displayed on screen, paper, or in other media. CSS can save a lot of effort by controling the layout of multiple web pages all at once. However, it is important to note that you don't always need to generate CSS files on your own. There are many well-written CSS templates online, such as w3css, UIkit, etc. In our demo, we do not create our own CSS files. Instead, we load a CSS from online resource.
 
-External Material: https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/about-readmes
+External Material: https://www.w3schools.com/w3css/defaulT.asp
 
 ### JavaScript
 
@@ -26,18 +26,18 @@ External Material: https://www.w3schools.com/jquery/jquery_intro.asp
 
 ## Things to Modify for Your Demo
 
-#### HTML
+### HTML
 
 Currently our HTML file contain a language option for multilingual models, but we do not utilize it since we are only running basic NER and PoS tagging in English. If your model only serve a single language, please remove the language option. We also have another option box for sentence examples. If our users just wish to run a simple demo, this feature can be very handy. Therefore, it is recommended that you include some examples that can clearly and nicely demonstrate the functionality of your demo. 
 
-In addition, you may also mod
+In addition, you may also modify the hyperlink to the [CSS files](https://github.com/HeglerTissot/NLP-demo-template/blob/yiwen_frontend/frontend/index.html#L11-L13) and the hyperlink to the [JavaScript files](https://github.com/HeglerTissot/NLP-demo-template/blob/yiwen_frontend/frontend/index.html#L85-L86) according to your needs.
 
-## How to Retrieve the Output
+### CSS
 
-## Post Request
+Since we are using external CSS files, we do not keep a hard copy of any CSS files in the folder for this demo. However, if you want to build your own CSS files, you can include the file in the frondend/css folder and add the extra configuration in the [backend.py file](https://github.com/HeglerTissot/NLP-demo-template/blob/yiwen_frontend/backend/backend.py#L96-L105).
 
-This script use an example string of 'Barack Obama is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017.', and calls two backend services mentioned above. You need to modify the port number and urls based on where your service is running.
+### Javascript
 
-```python
-python api_post_request.py
-```
+Based on your annotation service, you can modify the list of available languages. You can also modify the examples for each language. Furthermore, there are several functions that handle changes and sumbits on the HTML form. You may refer to the [JavaScript file](https://github.com/HeglerTissot/NLP-demo-template/blob/yiwen_frontend/frontend/js/demo.js) and use the comments to understand what each function behaves.
+
+Please note that you are very likely need to change the [runAnnotation()](https://github.com/HeglerTissot/NLP-demo-template/blob/yiwen_frontend/frontend/js/demo.js#L326-L341). Please modify the data variable to include every necessary elements for you annotation service. For our demo, we only need to send the text in data, but for your purpose, the data can be more complicated.
