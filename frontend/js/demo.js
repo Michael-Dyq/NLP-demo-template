@@ -290,7 +290,7 @@ function newLanguageSelect() {
 }
 
 /**
- * @abstract update the examples when a new language is chosen
+ * @abstract helper function to deliver the post request
  * @yield {NULL}
  */
 async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json={}, pfunction) {
@@ -310,7 +310,7 @@ async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json
 }
 
 /**
- * @abstract update the examples when a new language is chosen
+ * @abstract generate the output in the HTML document
  * @yield {NULL}
  */
 function outputXEL(json) {
@@ -320,7 +320,7 @@ function outputXEL(json) {
 }
 
 /**
- * @abstract update the examples when a new language is chosen
+ * @abstract send the post request with data, please modify if your service requires other variables 
  * @yield {NULL}
  */
 function runAnnotation() {
