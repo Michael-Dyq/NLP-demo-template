@@ -24,12 +24,13 @@ JavaScript files is capable of changing the HTML elements and CSS attributes. In
 
 External Material: https://www.w3schools.com/jquery/jquery_intro.asp
 
-## How to Implement it
-Run the command in your terminal. The service is currently running on dickens:4033 and dickens:4034. You may alter the port number based on your need.
+## Things to Modify for Your Demo
 
- ```python
+#### HTML
 
- ```
+Currently our HTML file contain a language option for multilingual models, but we do not utilize it since we are only running basic NER and PoS tagging in English. If your model only serve a single language, please remove the language option. We also have another option box for sentence examples. If our users just wish to run a simple demo, this feature can be very handy. Therefore, it is recommended that you include some examples that can clearly and nicely demonstrate the functionality of your demo. 
+
+In addition, you may also mod
 
 ## How to Retrieve the Output
 
