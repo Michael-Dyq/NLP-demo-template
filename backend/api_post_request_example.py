@@ -6,8 +6,8 @@ import requests
 import json
 
 # The target URL where we send to request to
-#url = 'http://localhost:8081/anns'
-url = 'http://dickens.seas.upenn.edu:4049/anns'
+url = 'http://localhost:8081/anns'
+#url = 'http://dickens.seas.upenn.edu:4049/anns'
 
 # The parameters we wish to send
 json_in = {

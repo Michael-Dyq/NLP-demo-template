@@ -46,7 +46,8 @@ def outputToJSON(data):
 class Annotation(object):
     @cherrypy.expose
     def index(self):
-        return open('../frontend/index.html')
+        print("Currently not available")
+        return 'Currently not available'
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -84,25 +85,16 @@ class Annotation(object):
 if __name__ == '__main__':
     
     # A note that the service has started
-    print("Starting rest service...")
+    print("Starting back end rest service...")
 
     # A default configuration
     config = {'server.socket_host': '0.0.0.0'}
     cherrypy.config.update(config)
 
     # Update the configuration to your host
-    # cherrypy.config.update({'server.socket_port': 8081})
-    cherrypy.config.update({'server.socket_host': 'dickens.seas.upenn.edu', 'server.socket_port': 4049})
-    conf = {
-        '/': {
-            'tools.sessions.on': True,
-            'tools.staticdir.root': os.path.abspath(os.getcwd())
-        },
-       '/js': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': '../frontend/js'
-        },
-    }
+    cherrypy.config.update({'server.socket_port': 8081})
+    
+    # cherrypy.config.update({'server.socket_host': 'dickens.seas.upenn.edu', 'server.socket_port': 4049})
 
     # Start the service
-    cherrypy.quickstart(Annotation(), '/', conf)
+    cherrypy.quickstart(Annotation(), '/')

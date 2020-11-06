@@ -293,16 +293,16 @@ function newLanguageSelect() {
  * @abstract helper function to deliver the post request
  * @yield {NULL}
  */
-async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json={}, pfunction) {
+async function postData(url, data_json={}, pfunction) {
     console.log("input: " + JSON.stringify(data_json))
     fetch(url, {
         method: 'POST',
-        cache: 'no-cache',
+		cache: 'no-cache',
         headers: {
             'Accept': "application/json, text/plain, */*",
             'Content-Type': "application/json;charset=utf-8"
         },
-        //mode: 'no-cors',
+        mode: 'no-cors',
         body: JSON.stringify(data_json)
 	}).then(resp => resp.json())
 		.then(json_output => {pfunction(json_output)}
@@ -336,7 +336,8 @@ function runAnnotation() {
     fText = document.getElementById("text").value;
     data = '{ "text" : "' + fText +  '" }';
     
-    url="http://dickens.seas.upenn.edu:4049/anns";
+	// url="http://dickens.seas.upenn.edu:4049/anns";
+	url = "http://localhost:8082/generate";
     postData(url, JSON.parse(data), outputXEL);
 }
 
