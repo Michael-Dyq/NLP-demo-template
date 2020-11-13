@@ -337,10 +337,10 @@ function runAnnotation() {
     data = '{ "text" : "' + fText +  '" }';
     
 	// url="http://dickens.seas.upenn.edu:4049/anns";
-	url_tokenize = "http://localhost:8082/tokenize";
+	url_tokenize = "/tokenize";
     postData(url_tokenize, JSON.parse(data), outputXEL);
 
-	url_pos = "http://localhost:8082/pos";
+	url_pos = "/pos";
 	postData(url_pos, JSON.parse(data), outputXEL);
 }
 
