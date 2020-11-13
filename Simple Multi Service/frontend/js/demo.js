@@ -316,7 +316,7 @@ async function postData(url, data_json={}, pfunction) {
 function outputXEL(json) {
 	console.log("XEL resulting json: " + JSON.stringify(json));
 	result = document.getElementById("result")
-	result.innerHTML = JSON.stringify(json, null, 2)
+	result.innerHTML += JSON.stringify(json, null, 2) + "<br><br>"
 }
 
 /**
@@ -337,8 +337,11 @@ function runAnnotation() {
     data = '{ "text" : "' + fText +  '" }';
     
 	// url="http://dickens.seas.upenn.edu:4049/anns";
-	url = "http://localhost:8082/generate";
-    postData(url, JSON.parse(data), outputXEL);
+	url_tokenize = "http://localhost:8082/tokenize";
+    postData(url_tokenize, JSON.parse(data), outputXEL);
+
+	url_pos = "http://localhost:8082/pos";
+	postData(url_pos, JSON.parse(data), outputXEL);
 }
 
 /**

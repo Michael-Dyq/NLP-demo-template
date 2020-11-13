@@ -11,8 +11,29 @@ class Frontend(object):
         return open('./index.html')
 
     @cherrypy.expose
-    def generate(self, text = 'I love sushi'):
-        url = 'http://localhost:8081/anns'
+    def pos(self, text = 'I love sushi'):
+        url = 'http://localhost:8081/pos'
+        if cherrypy.request.body:
+            body = json.loads(cherrypy.request.body.read())
+            text = body['text']
+            
+        # The parameters we wish to send
+        json_in = {
+            "text": text
+        }
+
+        # Set the headers for the request
+        headers = {'content-type': 'application/json'}
+
+        # Post the request
+        json_out = requests.post(url, data=json.dumps(json_in), headers=headers)
+
+        # Retrieve the JSON of the Output
+        return json_out
+
+    @cherrypy.expose
+    def tokenize(self, text = 'I love sushi'):
+        url = 'http://localhost:8081/tokenize'
         if cherrypy.request.body:
             body = json.loads(cherrypy.request.body.read())
             text = body['text']
