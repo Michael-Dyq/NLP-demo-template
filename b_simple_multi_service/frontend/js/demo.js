@@ -323,7 +323,7 @@ function outputXEL(json) {
  * @abstract send the post request with data, please modify if your service requires other variables 
  * @yield {NULL}
  */
-function runAnnotation() {
+function runService() {
 	fLang = document.getElementById("lang").value;
     if (fLang != 'eng') {
         alert('Sorry! Only English is supported now.');
@@ -350,6 +350,6 @@ function runAnnotation() {
  */
 function formSubmit() {
 	$("#result").html( "" );
-	runAnnotation();
+	runService();
 	return false;
 }
