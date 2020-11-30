@@ -38,14 +38,13 @@ python -m spacy download en_core_web_sm
 ```
 
 ## How to Run it
-Run the command in your terminal. The service is currently running on dickens:4033 and dickens:4034. You may alter the port number based on your need.
+Run the command in your terminal. The service is currently running on http://localhost:8081. You may alter the port number based on your need.
 
  ```python
  python service_backend.py
  ```
 
 url = 'http://localhost:8081/
-~~url = 'http://dickens.seas.upenn.edu:8099/anns'~~
 
 ## How to Retrieve the Output
 
@@ -95,4 +94,4 @@ r = model(text)
 Please modify the outputToJSON function based on the behavior of your model. Your functions should contain more functionalities, including data validation, data pre-processing and/or other features.
 
 ## Step 3: Change the Ports and Urls for the Post Request and Backend Service Script
-In this demo, we use the dickens:8099 port. You should choose another available port and modify it. Moreover, the corresponding url for the backend service should be updated as well. We use **http://dickens.seas.upenn.edu:8099/anns** in our case.
+In this demo, we use the localhost:8081 port. You should choose another available port and modify it. Moreover, the corresponding url for the backend service files should be updated as well. 
