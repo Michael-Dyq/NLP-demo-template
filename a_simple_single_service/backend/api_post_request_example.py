@@ -1,13 +1,13 @@
 '''
-This script serves to call an API request on the Multilingual NER Demo on port 4033 
+This script serves to call an API request on the Demo on port 8099 
 '''
 
 import requests
 import json
 
 # The target URL where we send to request to
-#url = 'http://localhost:8081/anns'
-url = 'http://dickens.seas.upenn.edu:8099/anns'
+url = 'http://localhost:8081/tokenize'
+#url = 'http://dickens.seas.upenn.edu:4049/tokenize'
 
 # The parameters we wish to send
 json_in = {
@@ -18,7 +18,7 @@ json_in = {
 headers = {'content-type': 'application/json'}
 
 # Post the request
-json_out = requests.post(url, data = json.dumps(json_in), headers=headers)
+json_out = requests.post(url, data=json.dumps(json_in), headers=headers)
 
 # Retrieve the JSON of the Output
 res = json_out.json()
