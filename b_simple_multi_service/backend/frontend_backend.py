@@ -8,7 +8,7 @@ import requests
 class Frontend(object):
     @cherrypy.expose
     def index(self):
-        return open('./index.html')
+        return open('../frontend/index.html')
 
     @cherrypy.expose
     def pos(self, text = 'I love sushi'):
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         },
        '/js': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': './js'
+            'tools.staticdir.dir': '../frontend/js'
         },
     }
 
