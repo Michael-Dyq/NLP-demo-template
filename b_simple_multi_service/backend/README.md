@@ -2,8 +2,6 @@
 
 ## Things to Modify for Your Demo
 
-### Back end for the front end in Python
-
 Unlike simple single-service demo, we do not generate the annotation results in this service. Instead, our front end will call other services with its back end server. This allows us to hide the annotation urls and incorporate multiple annotation services from distinct sources. The [frontend_backend.py](To be Update for Final Version) is responsible for hosting the HTML file and send post request to the services for the responses. Generally, the root path should host our html files, and each other path can be assign to a service. For instance, if you wish to fetch the annotation result for PoS tagging, you can directly send the request to '/pos' and the backend service will forward the request to the backend of the PoS tagging service. In other words, the '/pos' path serves as a middleware.
 
 ### HTML
