@@ -16,7 +16,7 @@ nlp_zh = stanza.Pipeline('zh')
 # initialize English neural pipeline
 nlp_es = stanza.Pipeline('es')
 
-if not nlp_en or not nlp_es or not nlp_zh:
+if not nlp_en: # or not nlp_es or not nlp_zh:
     print("Initialization fails!")
 
 '''
@@ -42,20 +42,41 @@ nlp = stanza.Pipeline('de', processors=processor_dict, package=None)
 '''
 
 # run annotation over a sentence
-doc_en = nlp_en("Barack Obama was born in Hawaii. He loves sushi.") 
+doc_en = nlp_en("I like sushi. He likes fish. She likes steak.") 
 doc_es = nlp_es("Barack Obama nació en Hawaii. Le encanta el sushi.")
-doc_zh = nlp_zh("巴拉克·奥巴马在夏威夷出生。他喜欢寿司")
+doc_zh = nlp_zh("巴拉克·奥巴马在夏威夷出生。他喜欢寿司。")
 
 
 
 print("Chinese Tokens and Sentences")
 print([sentence.text for sentence in doc_zh.sentences])
 print([token.text for sentence in doc_zh.sentences for token in sentence.tokens])
+end_pos = []
+id = 0
+for sentence in doc_zh.sentences:
+    id += len(sentence.tokens)
+    end_pos.append(id)
+    
+print(end_pos)
+
 
 print("English Tokens and Sentences")
-print([sentence.text for sentence in doc_en.sentences])
 print([token.text for sentence in doc_en.sentences for token in sentence.tokens])
+end_pos = []
+id = 0
+for sentence in doc_en.sentences:
+    id += len(sentence.tokens)
+    end_pos.append(id)
+
+print(end_pos)
 
 print("Spanish Tokens and Sentences")
 print([sentence.text for sentence in doc_es.sentences])
 print([token.text for sentence in doc_es.sentences for token in sentence.tokens])
+end_pos = []
+id = 0
+for sentence in doc_es.sentences:
+    id += len(sentence.tokens)
+    end_pos.append(id)
+    
+print(end_pos)
