@@ -1,12 +1,27 @@
 import stanza
 
-# download English model
+# download English, Chinese, and Spanish model (takes a while)
 # stanza.download('en')
+# stanza.download('zh')
+# stanza.download('es')
+
+print("Initialization starts")
 
 # initialize English neural pipeline
-nlp = stanza.Pipeline('en')
+nlp_en = stanza.Pipeline('en')
+
+# initialize English neural pipeline
+nlp_zh = stanza.Pipeline('zh')
+
+# initialize English neural pipeline
+nlp_es = stanza.Pipeline('es')
+
+if not nlp_en or not nlp_es or not nlp_zh:
+    print("Initialization fails!")
 
 '''
+Optional:
+
 # OPTION 1: specify processor
 stanza.download('zh', processors='tokenize, pos')
 nlp = stanza.Pipeline('zh', processors='tokenize, pos')
@@ -27,7 +42,20 @@ nlp = stanza.Pipeline('de', processors=processor_dict, package=None)
 '''
 
 # run annotation over a sentence
-doc = nlp("Barack Obama was born in Hawaii. He loves sushi.") 
+doc_en = nlp_en("Barack Obama was born in Hawaii. He loves sushi.") 
+doc_es = nlp_es("Barack Obama nació en Hawaii. Le encanta el sushi.")
+doc_zh = nlp_zh("巴拉克·奥巴马在夏威夷出生。他喜欢寿司")
 
-# print(doc)
-# print(doc.entities)
+
+
+print("Chinese Tokens and Sentences")
+print([sentence.text for sentence in doc_zh.sentences])
+print([token.text for sentence in doc_zh.sentences for token in sentence.tokens])
+
+print("English Tokens and Sentences")
+print([sentence.text for sentence in doc_en.sentences])
+print([token.text for sentence in doc_en.sentences for token in sentence.tokens])
+
+print("Spanish Tokens and Sentences")
+print([sentence.text for sentence in doc_es.sentences])
+print([token.text for sentence in doc_es.sentences for token in sentence.tokens])
