@@ -14,16 +14,22 @@ import texas as tx
 # Load your annotation model here
 print("Initialization starts")
 
+# TODO: LRU Cache
+# models = {"stanza":{}, "spacy":{} }
+# models[stanza] = {"en":None, "es": None …}
+# stanza_models = {"en":None, "es": None …}
+# stanza_models["en"] = stanza.Pipeline("en")
+
 # initialize English neural pipeline
 nlp_en = stanza.Pipeline('en')
 
-# initialize English neural pipeline
+# initialize Chinese neural pipeline
 nlp_zh = stanza.Pipeline('zh')
 
-# initialize English neural pipeline
+# initialize Spanish neural pipeline
 nlp_es = stanza.Pipeline('es')
 
-if not nlp_en: #or not nlp_es or not nlp_zh:
+if not nlp_en or not nlp_es or not nlp_zh:
     print("Initialization fails!")
 
 ################################
