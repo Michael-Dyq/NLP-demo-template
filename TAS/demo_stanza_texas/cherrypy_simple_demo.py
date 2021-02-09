@@ -5,11 +5,21 @@ from typing import Text
 import cherrypy
 import stanza
 import texas as tx
+import spacy_udpipe
 
-# download English, Chinese, and Spanish model (takes a while)
+# STANZA: download English, Chinese, and Spanish model (takes a while)
 # stanza.download('en')
 # stanza.download('zh')
 # stanza.download('es')
+
+# UDPIPE: download English, Chinese, and Spanish model (takes a while)
+# spacy_udpipe.download("en")
+# spacy_udpipe.download("zh")
+# spacy_udpipe.download("es")
+
+nlp_en = spacy_udpipe.load("en")
+nlp_zh = spacy_udpipe.load("zh")
+nlp_es = spacy_udpipe.load("es")
 
 # Load your annotation model here
 print("Initialization starts")
