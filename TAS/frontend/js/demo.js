@@ -124,7 +124,7 @@ async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json
  * @yield {NULL}
  */
 function outputXEL(json) {
-	console.log("XEL resulting json: " + JSON.stringify(json));
+	//console.log("XEL resulting json: " + JSON.stringify(json));
 	result = document.getElementById("result")
 	result.innerHTML += JSON.stringify(json, null, 2) + '<br><br>'
 }
@@ -136,6 +136,8 @@ function outputXEL(json) {
 function runAnnotation() {
 	fLang = document.getElementById("lang").value;
 	valid_languages = ['eng', 'cmn', 'spa']
+	url_tokenize = "http://localhost:8081/process"
+
     if (!valid_languages.includes(fLang)) {
         alert('Sorry! Only English, Chinese, and Spanish are supported now.');
         langSelectField = document.getElementById("lang");
@@ -145,12 +147,24 @@ function runAnnotation() {
     }
 
     fText = document.getElementById("text").value;
-    data = '{ "text" : "' + fText +  '" ,' + '"lang" : "' + fLang + '" }';
+
+	packages = document.getElementsByTagName("input");
+	for(var i = 0; i < packages.length; i++) {
+		if(packages[i].type == "checkbox") {
+			if(packages[i].checked == true) {
+				data = '{ "text" : "' + fText +  '" ,' + '"lang" : "' + fLang + '" ,' + '"package" : "' + packages[i].id + '"}';
+				postData(url_tokenize, JSON.parse(data), outputXEL);
+			} 
+		}  
+	}
+
+
+	// data = '{ "text" : "' + fText +  '" ,' + '"lang" : "' + fLang + '" }';
 	
 	// we can post data to multiple service
     // url="http://dickens.seas.upenn.edu:4049/anns";
-	url_tokenize = "http://localhost:8081/process"
-	postData(url_tokenize, JSON.parse(data), outputXEL);
+	// url_tokenize = "http://localhost:8081/process"
+	// postData(url_tokenize, JSON.parse(data), outputXEL);
 }
 
 /**

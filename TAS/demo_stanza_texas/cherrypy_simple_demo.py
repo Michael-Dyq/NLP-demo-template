@@ -7,42 +7,52 @@ import stanza
 import texas as tx
 import spacy_udpipe
 
-# STANZA: download English, Chinese, and Spanish model (takes a while)
-# stanza.download('en')
-# stanza.download('zh')
-# stanza.download('es')
-
-# UDPIPE: download English, Chinese, and Spanish model (takes a while)
-# spacy_udpipe.download("en")
-# spacy_udpipe.download("zh")
-# spacy_udpipe.download("es")
-
-nlp_en = spacy_udpipe.load("en")
-nlp_zh = spacy_udpipe.load("zh")
-nlp_es = spacy_udpipe.load("es")
-
-# Load your annotation model here
-print("Initialization starts")
-
 # TODO: LRU Cache
 # models = {"stanza":{}, "spacy":{} }
 # models[stanza] = {"en":None, "es": None …}
 # stanza_models = {"en":None, "es": None …}
 # stanza_models["en"] = stanza.Pipeline("en")
 
-# initialize English neural pipeline
-nlp_en = stanza.Pipeline('en')
+# Load your annotation model here
+print("Initialization starts")
 
-# initialize Chinese neural pipeline
-nlp_zh = stanza.Pipeline('zh')
+model_lang_map = {}
 
-# initialize Spanish neural pipeline
-nlp_es = stanza.Pipeline('es')
+stanza_en = stanza.Pipeline('en')
+stanza_zh = stanza.Pipeline('zh')
+stanza_es = stanza.Pipeline('es')
 
-if not nlp_en or not nlp_es or not nlp_zh:
-    print("Initialization fails!")
+# TODO udpipe_en = spacy_udpipe.load("en")
+# TODO udpipe_zh = spacy_udpipe.load("zh")
+# TODO udpipe_es = spacy_udpipe.load("es")
 
-################################
+model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es}
+# TODO model_lang_map["spacy"] = {}
+# TODO model_lang_map["udpipe"] = {}
+
+
+# Define the functions to read outputs from stanza
+def get_tokens_stanza(docs):
+    tokens = [token.text for sentence in docs.sentences for token in sentence.tokens]
+    
+    return tokens
+
+def get_sents_stanza(docs):
+    end_pos = []
+    id = 0
+    for sentence in docs.sentences:
+        id += len(sentence.tokens)
+        end_pos.append(id)
+
+    return end_pos
+
+for package_key in model_lang_map:
+    for lang_key in model_lang_map[package_key]:
+        if not model_lang_map[package_key][lang_key]:
+            print("Initialization fails!")
+            break
+
+################################ CherryPy Layer ################################
 
 # Write a function that takes an input(string/JSON) and returns a TexAS object as output
 def load2TexAS(data):
@@ -53,31 +63,23 @@ def load2TexAS(data):
     # Collect the data
     string = data['text']
     lang = data['lang']
+    package = data['package']
     
-    # # Initialize the TexAS document
+    print(string, lang, package)
+    # Initialize the TexAS document
     mydoc = tx.Document(string)
     mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
     mydoc.date().setTimestamp("2021-01-19T14:44")
 
-    docs = None
-    if lang == "eng":
-        docs = nlp_en(string)
-
-    elif lang == "cmn":
-        docs = nlp_zh(string)
-    
-    elif lang == "spa":
-        docs = nlp_es(string)
+    model = model_lang_map[package][lang]
+    docs = model(string)
  
-    end_pos = []
-    id = 0
-    for sentence in docs.sentences:
-        id += len(sentence.tokens)
-        end_pos.append(id)
-    
-    tokens = [token.text for sentence in docs.sentences for token in sentence.tokens]
+    end_pos = get_sents_stanza(docs)
+    tokens = get_tokens_stanza(docs)
 
-    # # Conduct the tokenization and sentence separation
+    print(end_pos,1)
+    print(tokens,2)
+
     mydoc.setTokenList(tokens)
     mydoc.setSentenceList(end_pos)
 
