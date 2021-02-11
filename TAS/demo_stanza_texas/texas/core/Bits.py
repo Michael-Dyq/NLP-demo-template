@@ -34,11 +34,11 @@ class Bits:
                 l.append(bit)
         return l
 
-    def jss(self):
+    def TAS(self):
         if self._bits is None:
             self._bits = []
         d = []
         for bit in self._bits:
-            d.append(bit.jss())
+            d.append(bit.TAS())
         return d
 

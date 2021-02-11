@@ -34,10 +34,10 @@ class AnnotationViewSet:
         else:
             return False
         
-    def jss(self):
+    def TAS(self):
         d = {}
         for annViewName in self._anns:
-            d[annViewName] = self._anns[annViewName].jss()
+            d[annViewName] = self._anns[annViewName].TAS()
         return d
         
     def reverse(self, jss: dict):
@@ -45,7 +45,7 @@ class AnnotationViewSet:
         if jss is None:
             return
         if not type(jss) is dict:
-            raise Exception("AnnotationViewSet reverse 'jss' parameter is required to be 'dict'");
+            raise Exception("AnnotationViewSet reverse JSON-Serializable-Schema 'jss' parameter is required to be 'dict'");
         for annViewName in jss:
             annView = jss[annViewName]
             if not "type" in annView:

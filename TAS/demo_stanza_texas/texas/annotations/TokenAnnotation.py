@@ -16,9 +16,9 @@ class TokenAnnotation(Annotation):
     def getLabel(self):
         return self._label
 
-    def jss(self):
+    def TAS(self):
         d = {}
         d["type"] = self._type
         d["label"] = self._label
-        d["token_index"] = self._token_index
+        d["token_index"] = self._token
         return d

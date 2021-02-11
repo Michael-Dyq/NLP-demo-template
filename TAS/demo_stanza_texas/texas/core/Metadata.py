@@ -36,7 +36,7 @@ class Metadata:
         else:
             return len(self._meta)
 
-    def jss(self):
+    def TAS(self):
         d = {}
         if not self._meta is None:
             for attr in self._meta:

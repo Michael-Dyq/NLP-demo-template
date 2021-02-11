@@ -91,7 +91,7 @@ class Timestamp:
     def second(self):
         return self._second
 
-    def jss(self, ):
+    def TAS(self, ):
         pass
 
     def isValid(self, raiseException : bool):

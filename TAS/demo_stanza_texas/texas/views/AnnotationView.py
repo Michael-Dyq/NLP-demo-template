@@ -42,11 +42,11 @@ class AnnotationView:
     def annSet(self):
         return self._anns
    
-    def jss(self):
+    def TAS(self):
         d = {"name": self.getName(), "type": self.getType()}
         if self.getMeta() is not None and self.getMeta().size() > 0:
-            d["meta"] = self.getMeta().jss()
-        d["anns"] = self.getAnnSet().jss()
+            d["meta"] = self.getMeta().TAS()
+        d["anns"] = self.getAnnSet().TAS()
         return d
 
     def reverse(self, jss:dict):
@@ -54,7 +54,9 @@ class AnnotationView:
         if jss is None:
             return
         if not type(jss) is dict:
-            raise Exception("AnnotationView reverse 'jss' parameter is required to be 'dict'");
+            raise Exception("AnnotationView reverse JSON-Serializable-Schema 'jss' parameter is required to be 'dict'");
+        if "meta" in jss:
+            self.getMeta().reverse(jss["meta"])
         if "anns" in jss:
             #print(">>>>>",jss["anns"])
             self.getAnnSet().reverse(jss["anns"])

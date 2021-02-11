@@ -10,6 +10,6 @@ class Tokens(CharView):
         # automatically name "TOKENS" and set type as "CharView" 
         super(Tokens, self).__init__(pName = "TOKENS")
 
-    def add(self,pStartChar:int, pEndChar:int, pLabel:str = ""):
-        self.getAnnSet().add ( CharAnnotation(pStartChar, pEndChar, pLabel) )
+    def add(self,pStartChar:int, pEndChar:int, pLabel:str = "", pIndex = None):
+        self.getAnnSet().add ( CharAnnotation(pStartChar, pEndChar, pLabel, pIndex) )
         
