@@ -143,6 +143,10 @@ if __name__ == '__main__':
             'tools.staticdir.on': True,
             'tools.staticdir.dir': '../frontend/js'
         },
+       '/css': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': '../frontend/css'
+        },
     }
 
     # Start the service
