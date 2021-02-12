@@ -77,13 +77,13 @@ def load2TexAS(data):
     end_pos = get_sents_stanza(docs)
     tokens = get_tokens_stanza(docs)
 
-    print(end_pos,1)
-    print(tokens,2)
-
-    mydoc.setTokenList(tokens)
+    mydoc.setTokenList(tokens, indexed=True)
+    mydoc.views().get("TOKENS").meta().set("generator", "stanza")
+    mydoc.views().get("TOKENS").meta().set("model", package + "-" + lang )
     mydoc.setSentenceList(end_pos)
 
-    return mydoc
+    myTabView = tx.UITabularView(mydoc)
+    return myTabView.HTML()
 
 class Annotation(object):
     @cherrypy.expose
@@ -120,8 +120,7 @@ class Annotation(object):
                 data = para
        
         result = load2TexAS(data) 
-        print(result)
-        return result.jss()
+        return result
 
 if __name__ == '__main__':
     

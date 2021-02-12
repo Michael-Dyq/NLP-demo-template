@@ -126,7 +126,9 @@ async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json
 function outputXEL(json) {
 	//console.log("XEL resulting json: " + JSON.stringify(json));
 	result = document.getElementById("result")
-	result.innerHTML += JSON.stringify(json, null, 2) + '<br><br>'
+	console.log(JSON.stringify(json))
+	result.innerHTML +=	JSON.stringify(json)
+
 }
 
 /**
