@@ -126,8 +126,9 @@ async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json
 function outputXEL(json) {
 	//console.log("XEL resulting json: " + JSON.stringify(json));
 	result = document.getElementById("result")
-	console.log(JSON.stringify(json))
-	result.innerHTML +=	JSON.stringify(json).replace('"', "")
+	json_string = JSON.stringify(json)
+	console.log(json_string)
+	result.innerHTML +=	json_string.substring(1, json_string.length - 1).replaceAll('\\"', '"')
 
 }
 
