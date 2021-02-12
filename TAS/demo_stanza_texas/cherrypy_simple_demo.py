@@ -83,7 +83,7 @@ def load2TexAS(data):
     mydoc.setSentenceList(end_pos)
 
     myTabView = tx.UITabularView(mydoc)
-    return myTabView.HTML()
+    return myTabView.HTML().replace("\n", "").replace('\"', '')
 
 class Annotation(object):
     @cherrypy.expose

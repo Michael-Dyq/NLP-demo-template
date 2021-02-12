@@ -127,7 +127,7 @@ function outputXEL(json) {
 	//console.log("XEL resulting json: " + JSON.stringify(json));
 	result = document.getElementById("result")
 	console.log(JSON.stringify(json))
-	result.innerHTML +=	JSON.stringify(json)
+	result.innerHTML +=	JSON.stringify(json).replace('"', "")
 
 }
 
