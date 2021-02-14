@@ -66,12 +66,11 @@ function fillLanguageSelectField() {
 		if (xel_langs.hasOwnProperty(key)) {           
 			var opt = document.createElement("option");
 			opt.value=key;
-			opt.innerHTML = xel_langs[key]; // ["lang"]; 
+			opt.innerHTML = xel_langs[key];
 			selectField.appendChild(opt);
 		}
 	}	
 	selectField.value = "eng";
-	// textField.value = xel_langs["eng"]["text"];
 	fillExampleSelectField(selectField.value)
 }
 
@@ -103,7 +102,7 @@ function newLanguageSelect() {
  * @abstract helper function to deliver the post request
  * @yield {NULL}
  */
-async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json={}, pfunction) {
+async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json={}, pfunction, lang, model) {
     console.log("input: " + JSON.stringify(data_json))
     fetch(url, {
         method: 'POST',
@@ -115,7 +114,7 @@ async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json
         //mode: 'no-cors',
         body: JSON.stringify(data_json)
 	}).then(resp => resp.json())
-		.then(json_output => {pfunction(json_output)}
+		.then(json_output => {pfunction(json_output, lang, model)}
 	);
 }
 
@@ -123,13 +122,13 @@ async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json
  * @abstract generate the output in the HTML document
  * @yield {NULL}
  */
-function outputXEL(json) {
-	//console.log("XEL resulting json: " + JSON.stringify(json));
+function outputXEL(json, lang, model) {
 	result = document.getElementById("result")
 	json_string = JSON.stringify(json)
 	console.log(json_string)
+	result.innerHTML += `<div id="${model}_${lang}_output"> Result from ${model.toUpperCase()}`
 	result.innerHTML +=	json_string.substring(1, json_string.length - 1).replaceAll('\\"', '"')
-
+	result.innerHTML += '</div>'
 }
 
 /**
@@ -156,18 +155,10 @@ function runAnnotation() {
 		if(packages[i].type == "checkbox") {
 			if(packages[i].checked == true) {
 				data = '{ "text" : "' + fText +  '" ,' + '"lang" : "' + fLang + '" ,' + '"package" : "' + packages[i].id + '"}';
-				postData(url_tokenize, JSON.parse(data), outputXEL);
+				postData(url_tokenize, JSON.parse(data), outputXEL, fLang, packages[i].id);
 			} 
 		}  
 	}
-
-
-	// data = '{ "text" : "' + fText +  '" ,' + '"lang" : "' + fLang + '" }';
-	
-	// we can post data to multiple service
-    // url="http://dickens.seas.upenn.edu:4049/anns";
-	// url_tokenize = "http://localhost:8081/process"
-	// postData(url_tokenize, JSON.parse(data), outputXEL);
 }
 
 /**

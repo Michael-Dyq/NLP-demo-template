@@ -13,44 +13,99 @@ import spacy_udpipe
 # stanza_models = {"en":None, "es": None …}
 # stanza_models["en"] = stanza.Pipeline("en")
 
-# Load your annotation model here
+################################ Model Loading ################################
 print("Initialization starts")
-
 model_lang_map = {}
 
-stanza_en = stanza.Pipeline('en')
-stanza_zh = stanza.Pipeline('zh')
-stanza_es = stanza.Pipeline('es')
+print("Stanza model initialization starts")
+stanza_en = stanza.Pipeline('en', processors='tokenize,pos,lemma,ner')
+stanza_zh = stanza.Pipeline('zh', processors='tokenize,pos,lemma,ner')
+stanza_es = stanza.Pipeline('es', processors='tokenize,pos,lemma,ner')
+print("Stanza model initialization ends")
 
-# TODO udpipe_en = spacy_udpipe.load("en")
-# TODO udpipe_zh = spacy_udpipe.load("zh")
-# TODO udpipe_es = spacy_udpipe.load("es")
+print("UDpipe model initialization starts")
+udpipe_en = spacy_udpipe.load("en")
+udpipe_zh = spacy_udpipe.load("zh")
+udpipe_es = spacy_udpipe.load("es")
+print("UDpipe model initialization ends")
 
-model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es}
 # TODO model_lang_map["spacy"] = {}
-# TODO model_lang_map["udpipe"] = {}
+model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es}
+model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es}
 
 
-# Define the functions to read outputs from stanza
-def get_tokens_stanza(docs):
-    tokens = [token.text for sentence in docs.sentences for token in sentence.tokens]
-    
-    return tokens
+################################ Processor Functions ################################
+# Define the functions to read outputs from STANZA
+def get_services_stanza(docs):
+    index = -1
+    sentIndex = 0
+    tokens = [] # score token objects
+    nlpTokenList = [] # score token text
+    nlpPOSList = []
+    nlpLemmaList = []
+    nlpSentenceEndPositions = []
+    nlpNERList = []
 
-def get_sents_stanza(docs):
-    end_pos = []
-    id = 0
     for sentence in docs.sentences:
-        id += len(sentence.tokens)
-        end_pos.append(id)
+        sentIndex+=len(sentence.tokens)
+        nlpSentenceEndPositions.append(sentIndex)
+        for word in sentence.words:
+            index += 1
+            nlpTokenList.append(word.text)
+            nlpPOSList.append(word.pos)
+            nlpLemmaList.append(word.lemma)
+    
+        for token in sentence.tokens:
+            tokens.append(token)
 
-    return end_pos
+    word_index = 0
+    for idx in range(len(tokens)):
+        token = tokens[idx]
+        if token.ner.startswith("S-"):
+            nerLabel = token.ner[2:]
+            nlpNERList.append( [nerLabel, word_index] )
+        if token.ner.startswith("B-"):
+            start_token = word_index
+            nerLabelStart = token.ner[2:]
+        if token.ner.startswith("E-"):
+            final_token = word_index
+            nerLabelFinal = token.ner[2:]
+            if nerLabelStart == nerLabelFinal:
+                nlpNERList.append( [nerLabelFinal, start_token, final_token+1] )
+                nerLabelStart = ""
+                nerLabelFinal = ""
+        word_index += len(token.words)
+
+    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList, nlpNERList
+
+# Define the functions to read outputs from UDpipe
+def get_services_udpipe(docs):
+    index = -1
+    sentIndex = 0
+    nlpTokenList = []
+    nlpPOSList = []
+    nlpLemmaList = []
+    nlpSentenceEndPositions = []
+
+    for sentence in docs.sents:
+        sentIndex+=len(sentence)
+        nlpSentenceEndPositions.append(sentIndex)
+
+    for token in docs: 
+        index += 1
+        nlpTokenList.append(token.text)
+        nlpPOSList.append(token.pos_)
+        nlpLemmaList.append(token.lemma_)
+
+    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList
+
 
 for package_key in model_lang_map:
     for lang_key in model_lang_map[package_key]:
         if not model_lang_map[package_key][lang_key]:
             print("Initialization fails!")
             break
+
 
 ################################ CherryPy Layer ################################
 
@@ -73,17 +128,39 @@ def load2TexAS(data):
 
     model = model_lang_map[package][lang]
     docs = model(string)
- 
-    end_pos = get_sents_stanza(docs)
-    tokens = get_tokens_stanza(docs)
+    
+    if package == "stanza":
+        tokens, end_pos, lemma, pos, ner = get_services_stanza(docs)
+
+    elif package == "spacy":
+        # TODO: change stanza to spacy
+        tokens, end_pos, lemma, pos, ner = get_services_stanza(docs)
+
+    elif package == "udpipe":
+        tokens, end_pos, lemma, pos = get_services_udpipe(docs)
+
+    else:
+        print("Invalid Model. Please try again...")
+        return
 
     mydoc.setTokenList(tokens, indexed=True)
     mydoc.views().get("TOKENS").meta().set("generator", "stanza")
     mydoc.views().get("TOKENS").meta().set("model", package + "-" + lang )
     mydoc.setSentenceList(end_pos)
+    mydoc.addTokenView("LEMMA", lemma)
+    mydoc.addTokenView("POS", pos)
+    if package == "stanza" or package == "spacy":
+        mydoc.addSpanView("NER", ner)
 
+
+    # Extract HTML View
     myTabView = tx.UITabularView(mydoc)
-    return myTabView.HTML().replace("\n", "")#.replace('\"', '')
+    myTabView.showView("POS")
+    myTabView.showView("LEMMA", labelCSS=False)
+    if package == "stanza" or package == "spacy":
+        myTabView.showView("NER")
+
+    return myTabView.HTML().replace("\n", "")
 
 class Annotation(object):
     @cherrypy.expose
