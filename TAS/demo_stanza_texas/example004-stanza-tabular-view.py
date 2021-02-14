@@ -9,7 +9,7 @@ TXText = "Sigmund Freud was an Austrian neurologist and the founder of psychoana
 
 TXSpacyModel = TXLang
 
-nlp = stanza.Pipeline(TXSpacyModel,processors='tokenize,pos,lemma,ner')
+nlp = stanza.Pipeline(TXSpacyModel, processors='tokenize,pos,lemma,ner')
 
 print ("Processing text: ",TXText)
 
@@ -101,10 +101,10 @@ print("============")
 print("Tabular View")
 print("------------")
 myTabView = tx.UITabularView(mydoc2)
-#myTabView.showView("TOKENS")
-#myTabView.showView("POS")
-# myTabView.showView("LEMMA", labelCSS=False)
-# myTabView.showView("NER")
+# myTabView.showView("TOKENS")
+myTabView.showView("POS")
+myTabView.showView("LEMMA", labelCSS=False)
+myTabView.showView("NER")
 # myTabView.showView("CUSTOM")
 print(myTabView.HTML())
 print("------------")
