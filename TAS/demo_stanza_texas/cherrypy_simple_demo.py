@@ -8,7 +8,7 @@ import stanza
 import spacy_udpipe
 import spacy
 
-# TODO: LRU Cache
+# TODO: LRU Cache (Time to live)
 # models = {"stanza":{}, "spacy":{} }
 # models[stanza] = {"en":None, "es": None …}
 # stanza_models = {"en":None, "es": None …}
@@ -24,13 +24,19 @@ stanza_zh = stanza.Pipeline('zh', processors='tokenize,pos,lemma,ner')
 stanza_es = stanza.Pipeline('es', processors='tokenize,pos,lemma,ner')
 print("Stanza model initialization ends")
 
+print("SpaCy model initialization starts")
+spacy_en = spacy.load("en_core_web_sm")
+spacy_zh = spacy.load("zh_core_web_sm")
+spacy_es = spacy.load("es_core_news_sm")
+print("SpaCy model initialization ends")
+
 print("UDpipe model initialization starts")
 udpipe_en = spacy_udpipe.load("en")
 udpipe_zh = spacy_udpipe.load("zh")
 udpipe_es = spacy_udpipe.load("es")
 print("UDpipe model initialization ends")
 
-# TODO model_lang_map["spacy"] = {}
+model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es}
 model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es}
 model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es}
 
@@ -78,6 +84,68 @@ def get_services_stanza(docs):
         word_index += len(token.words)
 
     return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList, nlpNERList
+
+# Define the functions to read outputs from SpaCy
+def get_services_spacy(docs):
+    index = -1
+    sentIndex = 0
+    nlpTokenList = []
+    nlpPOSList = []
+    nlpLemmaList = []
+    nlpNerList = []
+    nlpSentenceEndPositions = []
+
+    for sentence in docs.sents:
+        sentIndex+=len(sentence)
+        nlpSentenceEndPositions.append(sentIndex)
+
+    for token in docs:
+        index += 1
+        nlpTokenList.append(token.text)
+        nlpPOSList.append(token.pos_)
+        nlpLemmaList.append(token.lemma_)
+        nlpNerList.append([token.ent_iob_, token.ent_type_]) # eg:[['B','NORP'],['O',''],...]
+        
+    # NER
+    nerList = []
+    word_index = 0
+    start_token, inside_token, final_token = -1,-1,-1
+    contin = True
+    for idx in range(len(nlpNerList)):
+        token_iob, token_ner = nlpNerList[idx]
+        if token_iob == 'B':
+            if len(nerList) == 0 and contin:
+                start_token = word_index
+                nerLabelStart = token_ner
+                contin=False
+                
+            else:
+                if start_token < final_token:
+                    nerList.append([nerLabelStart, start_token, final_token+1])
+                else:
+                    nerList.append([nerLabelStart, start_token])
+                start_token = word_index
+                nerLabelStart = token_ner
+                
+        if token_iob == 'I':
+            inside_token = word_index
+
+        if token_iob == 'O':
+            final_token = inside_token
+                
+        word_index += 1
+        
+    if start_token == -1:
+        pass
+
+    else:
+        if start_token < final_token:
+            nerList.append([nerLabelStart, start_token, final_token+1])
+        else:
+            nerList.append([nerLabelStart, start_token])
+
+    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList, nerList
+
 
 # Define the functions to read outputs from UDpipe
 def get_services_udpipe(docs):
@@ -134,8 +202,7 @@ def load2TexAS(data):
         tokens, end_pos, lemma, pos, ner = get_services_stanza(docs)
 
     elif package == "spacy":
-        # TODO: change stanza to spacy
-        tokens, end_pos, lemma, pos, ner = get_services_stanza(docs)
+        tokens, end_pos, lemma, pos, ner = get_services_spacy(docs)
 
     elif package == "udpipe":
         tokens, end_pos, lemma, pos = get_services_udpipe(docs)
@@ -145,20 +212,18 @@ def load2TexAS(data):
         return
 
     mydoc.setTokenList(tokens, indexed=True)
-    mydoc.views().get("TOKENS").meta().set("generator", "stanza")
+    mydoc.views().get("TOKENS").meta().set("generator", package)
     mydoc.views().get("TOKENS").meta().set("model", package + "-" + lang )
     mydoc.setSentenceList(end_pos)
     mydoc.addTokenView("LEMMA", lemma)
     mydoc.addTokenView("POS", pos)
-    if package == "stanza" or package == "spacy":
-        mydoc.addSpanView("NER", ner)
-
-
+    
     # Extract HTML View
     myTabView = tx.UITabularView(mydoc)
     myTabView.showView("POS")
     myTabView.showView("LEMMA", labelCSS=False)
     if package == "stanza" or package == "spacy":
+        mydoc.addSpanView("NER", ner)
         myTabView.showView("NER")
 
     return myTabView.HTML().replace("\n", "")
