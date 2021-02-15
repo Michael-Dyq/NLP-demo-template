@@ -7,8 +7,6 @@ Current version
 + es_core_news_lg == 3.0.0              +
 +---------------------------------------+
 '''
-
-
 import json
 import texas as tx
 import spacy

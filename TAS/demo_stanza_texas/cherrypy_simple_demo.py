@@ -3,9 +3,10 @@ import time
 import json
 from typing import Text
 import cherrypy
-import stanza
 import texas as tx
+import stanza
 import spacy_udpipe
+import spacy
 
 # TODO: LRU Cache
 # models = {"stanza":{}, "spacy":{} }
