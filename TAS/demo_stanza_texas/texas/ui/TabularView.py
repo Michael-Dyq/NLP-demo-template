@@ -250,5 +250,6 @@ class UITabularView():
                     html += '  </tr>\n'
 
             html += ' </table>' + '\n'
+            html += '<br>' + '\n'
             html += '</div>' + '\n'
         return html

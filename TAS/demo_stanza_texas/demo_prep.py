@@ -10,3 +10,9 @@ stanza.download('es')
 spacy_udpipe.download("en")
 spacy_udpipe.download("zh")
 spacy_udpipe.download("es")
+
+# SpaCy: run in command line
+# python -m spacy download en_core_web_sm
+# python -m spacy download zh_core_web_sm
+# python -m spacy download es_core_news_sm
+

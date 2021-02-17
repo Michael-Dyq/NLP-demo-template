@@ -220,8 +220,8 @@ def load2TexAS(data):
     
     # Extract HTML View
     myTabView = tx.UITabularView(mydoc)
-    myTabView.showView("POS")
     myTabView.showView("LEMMA", labelCSS=False)
+    myTabView.showView("POS")
     if package == "stanza" or package == "spacy":
         mydoc.addSpanView("NER", ner)
         myTabView.showView("NER")

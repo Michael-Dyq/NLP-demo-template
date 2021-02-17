@@ -36,6 +36,13 @@ var xel_examples = {
 	], 
 }
 
+function clearResults(){
+	$("#result-stanza").html( "" );
+	$("#result-spacy").html( "" );
+	$("#result-udpipe").html( "" );
+}
+
+
 /**
  * @abstract change the example options based on the updated language options
  * @param {string} lang a kind of langage in string
@@ -55,7 +62,7 @@ function fillExampleSelectField(lang) {
 	}	
 	selectField.value = "0";
 	textField.value = xel_examples[lang][0];
-	$("#result").html( "" );
+	clearResults();
 }
 
 /**
@@ -88,7 +95,7 @@ function newExampleSelect() {
 	example = exampleSelectField.value;
 	textField = document.getElementById("text");
 	textField.value = xel_examples[lang][example]; 
-	$("#result").html( "" );
+	clearResults();
 }
 
 /**
@@ -126,7 +133,7 @@ async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json
  * @yield {NULL}
  */
 function outputXEL(json, lang, model) {
-	result = document.getElementById("result")
+	result = document.getElementById("result-" + model)
 	json_string = JSON.stringify(json)
 	console.log(json_string)
 	result.innerHTML += `<div id="${model}_${lang}_output" class="title"> Result from ${model.toUpperCase()}`
@@ -141,7 +148,7 @@ function outputXEL(json, lang, model) {
 function runAnnotation() {
 	fLang = document.getElementById("lang").value;
 	valid_languages = ['eng', 'cmn', 'spa']
-	url_tokenize = "http://localhost:8081/process"
+	url_tokenize = "./process"
 
     if (!valid_languages.includes(fLang)) {
         alert('Sorry! Only English, Chinese, and Spanish are supported now.');
@@ -169,7 +176,7 @@ function runAnnotation() {
  * @yield {boolean} false
  */
 function formSubmit() {
-	$("#result").html( "" );
+	clearResults();
 	runAnnotation();
 	return false;
 }
