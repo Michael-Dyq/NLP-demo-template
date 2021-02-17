@@ -112,7 +112,7 @@ function newLanguageSelect() {
  * @abstract helper function to deliver the post request
  * @yield {NULL}
  */
-async function postData(url='http://dickens.seas.upenn.edu:4049/anns', data_json={}, pfunction, lang, model) {
+async function postData(url, data_json={}, pfunction, lang, model) {
     console.log("input: " + JSON.stringify(data_json))
     fetch(url, {
         method: 'POST',
@@ -164,8 +164,8 @@ function runAnnotation() {
 	for(var i = 0; i < packages.length; i++) {
 		if(packages[i].type == "checkbox") {
 			if(packages[i].checked == true) {
-				data = '{ "text" : "' + fText +  '" ,' + '"lang" : "' + fLang + '" ,' + '"package" : "' + packages[i].id + '"}';
-				postData(url_tokenize, JSON.parse(data), outputXEL, fLang, packages[i].id);
+				data = { "text" : fText , "lang" : fLang , "package" : packages[i].id };
+				postData(url_tokenize, data, outputXEL, fLang, packages[i].id);
 			} 
 		}  
 	}

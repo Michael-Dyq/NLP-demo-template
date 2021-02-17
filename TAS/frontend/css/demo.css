@@ -14,6 +14,7 @@
 .POS-NUM { color:#000; background-color: #dbdfb9; }
 .POS-ADV { color:#000; background-color: #f0f7b6; }
 .POS-PART { color:#000; background-color: #c4eeb9; }
+.POS-INTJ { color:#000; background-color: #9af8fd;}
 
 .NER-PER { color:#000; background-color:#ffeec7;}
 .NER-PERSON { color:#000; background-color:#ffeec7; }
