@@ -1,0 +1,1 @@
+http://localhost:8081/process?text=l%20like%20sushi.&lang=eng
