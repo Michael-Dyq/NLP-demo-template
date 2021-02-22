@@ -206,9 +206,24 @@ class UITabularView():
         if view.getType() == "AnnotationView.SpanView":
             self.addSpanView(view, viewLabel, labelCSS)
 
+    # Newly added
+    def tokenNumPerSentence(self):
+        view = self._TAS.getViews().get("SENTENCES")
+        anns = view.getAnnSet().getAnns()
+        res = []
+
+        for c in anns:
+            startToken = c.getStartToken()
+            finalToken = c.getFinalToken()
+            res.append(finalToken - startToken)
+
+        return res
+
     def HTML(self):
         html = ''
-        # html += self._TAS.getText() + '\n'
+        # Newly added
+        metadata = self._TAS.getMeta().TAS()
+        html += '<div class="title"> Result from ' + metadata['package'].upper() + ' ( Number of Sentence(s): ' + str(len(self._sentences)) + '; Number of Token(s): ' + str(len(self._tokens)) + '; Token(s) per Sentence: ' + str(self.tokenNumPerSentence()) + ') </div>'
         for s in self._sentences:
             html += '<div class="w3-panel w3-border w3-border-amber" style="overflow-x: auto;white-space: nowrap;">' + '\n'
             html += '&nbsp;' + '\n'

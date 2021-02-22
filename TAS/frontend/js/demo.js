@@ -136,9 +136,7 @@ function outputXEL(json, lang, model) {
 	result = document.getElementById("result-" + model)
 	json_string = JSON.stringify(json)
 	console.log(json_string)
-	result.innerHTML += `<div id="${model}_${lang}_output" class="title"> Result from ${model.toUpperCase()}`
 	result.innerHTML +=	json_string.substring(1, json_string.length - 1).replaceAll('\\"', '"')
-	result.innerHTML += '</div>'
 }
 
 /**

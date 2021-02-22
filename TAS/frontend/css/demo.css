@@ -1,4 +1,4 @@
-.title { color:green; text-align: center; margin: auto; width: 50%; border: 1px solid green; padding: 10px; border-radius: 25px;}
+.title { color:green; text-align: left; margin: auto; width: 100%; border: 1px solid green; padding: 10px;}
 
 .POS-PROPN { color:#000; background-color: #b7f1f5; }
 .POS-AUX { color:#000; background-color: #95dda5; }

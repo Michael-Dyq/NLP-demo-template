@@ -193,6 +193,7 @@ def load2TexAS(data):
     # Initialize the TexAS document
     mydoc = tx.Document(string)
     mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
+    mydoc.meta().set("package", package)
     mydoc.date().setTimestamp("2021-01-19T14:44")
 
     model = model_lang_map[package][lang]
