@@ -223,7 +223,7 @@ class UITabularView():
         html = ''
         # Newly added
         metadata = self._TAS.getMeta().TAS()
-        html += '<div class="title"> Result from ' + metadata['package'].upper() + ' ( Number of Sentence(s): ' + str(len(self._sentences)) + '; Number of Token(s): ' + str(len(self._tokens)) + '; Token(s) per Sentence: ' + str(self.tokenNumPerSentence()) + ') </div>'
+        html += '<div class="title"> Result from ' + metadata['package'].upper() + ' ( Number of Sentence(s): ' + str(len(self._sentences)) + '; Number of Token(s): ' + str(len(self._tokens)) + '; Token(s) per Sentence: ' + str(self.tokenNumPerSentence()) + ' ) </div>'
         for s in self._sentences:
             html += '<div class="w3-panel w3-border w3-border-amber" style="overflow-x: auto;white-space: nowrap;">' + '\n'
             html += '&nbsp;' + '\n'
