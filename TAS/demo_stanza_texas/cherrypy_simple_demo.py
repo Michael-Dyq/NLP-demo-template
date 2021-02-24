@@ -207,6 +207,10 @@ def load2TexAS(data):
     model = model_lang_map[package][lang]
     docs = model(string)
     
+    # if "stanza" in [], make 1 request instead of 3, change to packages
+    # len(tokens) = #tokens
+    # len(end_pos) = #sentence
+    # process(end_pos) = #tokens per sentences
     if package == "stanza":
         tokens, end_pos, lemma, pos, ner = get_services_stanza(docs)
 
@@ -235,6 +239,7 @@ def load2TexAS(data):
         mydoc.addSpanView("NER", ner)
         myTabView.showView("NER")
 
+    # concatenate the myTabView.HTML()
     return myTabView.HTML().replace("\n", "")
 
 class Annotation(object):
