@@ -22,24 +22,32 @@ print("Stanza model initialization starts")
 stanza_en = stanza.Pipeline('en', processors='tokenize,pos,lemma,ner')
 stanza_zh = stanza.Pipeline('zh', processors='tokenize,pos,lemma,ner')
 stanza_es = stanza.Pipeline('es', processors='tokenize,pos,lemma,ner')
+stanza_fr = stanza.Pipeline('fr', processors='tokenize,pos,lemma,ner')
+stanza_de = stanza.Pipeline('de', processors='tokenize,pos,lemma,ner')
+stanza_jp = stanza.Pipeline('ja', processors='tokenize,pos,lemma,ner')
 print("Stanza model initialization ends")
 
 print("SpaCy model initialization starts")
 spacy_en = spacy.load("en_core_web_sm")
 spacy_zh = spacy.load("zh_core_web_sm")
 spacy_es = spacy.load("es_core_news_sm")
+spacy_jp = spacy.load("ja_core_news_sm")
+spacy_de = spacy.load("de_core_news_sm")
+spacy_fr = spacy.load("fr_core_news_sm")
 print("SpaCy model initialization ends")
 
 print("UDpipe model initialization starts")
 udpipe_en = spacy_udpipe.load("en")
 udpipe_zh = spacy_udpipe.load("zh")
 udpipe_es = spacy_udpipe.load("es")
+udpipe_jp = spacy_udpipe.load("ja")
+udpipe_de = spacy_udpipe.load("de")
+udpipe_fr = spacy_udpipe.load("fr")
 print("UDpipe model initialization ends")
 
-model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es}
-model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es}
-model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es}
-
+model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_jp}
+model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_jp}
+model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_jp}
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA

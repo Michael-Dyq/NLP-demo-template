@@ -5,6 +5,9 @@ var xel_langs = {
     "eng": "English",
 	"cmn": "Mandarin",
 	"spa": "Spanish",
+	"fre": "French",
+	"ger": "German",
+	"jpn": "Japanese"
 }
 
 /**
@@ -13,7 +16,6 @@ var xel_langs = {
 
 var xel_examples = {
     "eng": [
-
 		"St. Michael's Church is on 5th st. near the light.",
 		"Hello world. My name is Mr. Smith. I work for the U.S. Government and I live in the U.S. I live in New York.",
 		"Mr.O'Neill thinks that the boys' stories about Chile's capital aren't amusing.",
@@ -34,6 +36,16 @@ var xel_examples = {
 		"Barack Hussein Obama II es un político y abogado estadounidense que se desempeñó como el 44º presidente de los Estados Unidos de 2009 a 2017. Miembro del Partido Demócrata, Obama fue el primer presidente afroamericano de los Estados Unidos. Anteriormente se desempeñó como senador de Estados Unidos por Illinois de 2005 a 2008 y como senador del estado de Illinois de 1997 a 2004. ",
 		"Mohandas Karamchand Gandhi fue un abogado indio, nacionalista anticolonial y especialista en ética política, que empleó la resistencia no violenta para liderar la exitosa campaña por la independencia de la India del dominio británico y, a su vez, inspiró movimientos por los derechos civiles y la libertad en todo el mundo. El Mahātmā honorífico, que se le aplicó por primera vez en 1914 en Sudáfrica, ahora se usa en todo el mundo."
 	], 
+	"fre": [
+		"Apple cherche à acheter une start-up anglaise pour 1 milliard de dollars."
+	],
+	"ger": [
+		"Die ganze Stadt ist ein Startup: Shenzhen ist das Silicon Valley für Hardw",
+		"Sigmund Freud war ein österreichischer Neurologe und der Begründer der Psychoanalyse, einer klinischen Methode zur Behandlung der Psychopathologie im Dialog zwischen einem Patienten und einem Psychoanalytiker. Freud wurde als Sohn galizischer jüdischer Eltern im mährischen Freiberg im österreichischen Reich geboren. Er qualifizierte sich 1881 als Doktor der Medizin an der Universität Wien. Freud lebte und arbeitete in Wien, nachdem er dort 1886 seine klinische Praxis eingerichtet hatte. 1938 verließ Freud Österreich, um der nationalsozialistischen Verfolgung zu entgehen. Er starb 1939 im britischen Exil."
+	],
+	"jpn": [
+		"アップルがイギリスの新興企業を１０億ドルで購入を検討"
+	]
 }
 
 function clearResults(){
@@ -145,11 +157,11 @@ function outputXEL(json, lang, model) {
  */
 function runAnnotation() {
 	fLang = document.getElementById("lang").value;
-	valid_languages = ['eng', 'cmn', 'spa']
+	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger']
 	url_tokenize = "./process"
 
     if (!valid_languages.includes(fLang)) {
-        alert('Sorry! Only English, Chinese, and Spanish are supported now.');
+        alert('Sorry! Invalid language...');
         langSelectField = document.getElementById("lang");
         langSelectField.value = 'eng';
         fillExampleSelectField('eng');
