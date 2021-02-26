@@ -19,19 +19,19 @@ print("Initialization starts")
 model_lang_map = {}
 
 print("Stanza model initialization starts")
-stanza_en = stanza.Pipeline('en', processors='tokenize,pos,lemma,ner')
-stanza_zh = stanza.Pipeline('zh', processors='tokenize,pos,lemma,ner')
-stanza_es = stanza.Pipeline('es', processors='tokenize,pos,lemma,ner')
-stanza_fr = stanza.Pipeline('fr', processors='tokenize,pos,lemma,ner')
-stanza_de = stanza.Pipeline('de', processors='tokenize,pos,lemma,ner')
-# stanza_jp = stanza.Pipeline('ja')
+stanza_en = stanza.Pipeline('en', processors='tokenize,pos,lemma')
+stanza_zh = stanza.Pipeline('zh', processors='tokenize,pos,lemma')
+stanza_es = stanza.Pipeline('es', processors='tokenize,pos,lemma')
+stanza_fr = stanza.Pipeline('fr', processors='tokenize,pos,lemma')
+stanza_de = stanza.Pipeline('de', processors='tokenize,pos,lemma')
+stanza_ja = stanza.Pipeline('ja', processors='tokenize,pos,lemma')
 print("Stanza model initialization ends")
 
 print("SpaCy model initialization starts")
 spacy_en = spacy.load("en_core_web_sm")
 spacy_zh = spacy.load("zh_core_web_sm")
 spacy_es = spacy.load("es_core_news_sm")
-# spacy_jp = spacy.load("ja_core_news_sm")
+spacy_ja = spacy.load("ja_core_news_sm")
 spacy_de = spacy.load("de_core_news_sm")
 spacy_fr = spacy.load("fr_core_news_sm")
 print("SpaCy model initialization ends")
@@ -40,14 +40,14 @@ print("UDpipe model initialization starts")
 udpipe_en = spacy_udpipe.load("en")
 udpipe_zh = spacy_udpipe.load("zh")
 udpipe_es = spacy_udpipe.load("es")
-# udpipe_jp = spacy_udpipe.load("ja")
+udpipe_ja = spacy_udpipe.load("ja")
 udpipe_de = spacy_udpipe.load("de")
 udpipe_fr = spacy_udpipe.load("fr")
 print("UDpipe model initialization ends")
 
-model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de }
-model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de }
-model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de }
+model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja }
+model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja }
+model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja }
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
@@ -59,7 +59,6 @@ def get_services_stanza(docs):
     nlpPOSList = []
     nlpLemmaList = []
     nlpSentenceEndPositions = []
-    nlpNERList = []
 
     for sentence in docs.sentences:
         sentIndex+=len(sentence.tokens)
@@ -73,25 +72,7 @@ def get_services_stanza(docs):
         for token in sentence.tokens:
             tokens.append(token)
 
-    word_index = 0
-    for idx in range(len(tokens)):
-        token = tokens[idx]
-        if token.ner.startswith("S-"):
-            nerLabel = token.ner[2:]
-            nlpNERList.append( [nerLabel, word_index] )
-        if token.ner.startswith("B-"):
-            start_token = word_index
-            nerLabelStart = token.ner[2:]
-        if token.ner.startswith("E-"):
-            final_token = word_index
-            nerLabelFinal = token.ner[2:]
-            if nerLabelStart == nerLabelFinal:
-                nlpNERList.append( [nerLabelFinal, start_token, final_token+1] )
-                nerLabelStart = ""
-                nerLabelFinal = ""
-        word_index += len(token.words)
-
-    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList, nlpNERList
+    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList
 
 # Define the functions to read outputs from SpaCy
 def get_services_spacy(docs):
@@ -113,46 +94,8 @@ def get_services_spacy(docs):
         nlpPOSList.append(token.pos_)
         nlpLemmaList.append(token.lemma_)
         nlpNerList.append([token.ent_iob_, token.ent_type_]) # eg:[['B','NORP'],['O',''],...]
-        
-    # NER
-    nerList = []
-    word_index = 0
-    start_token, inside_token, final_token = -1,-1,-1
-    contin = True
-    for idx in range(len(nlpNerList)):
-        token_iob, token_ner = nlpNerList[idx]
-        if token_iob == 'B':
-            if len(nerList) == 0 and contin:
-                start_token = word_index
-                nerLabelStart = token_ner
-                contin=False
-                
-            else:
-                if start_token < final_token:
-                    nerList.append([nerLabelStart, start_token, final_token+1])
-                else:
-                    nerList.append([nerLabelStart, start_token])
-                start_token = word_index
-                nerLabelStart = token_ner
-                
-        if token_iob == 'I':
-            inside_token = word_index
 
-        if token_iob == 'O':
-            final_token = inside_token
-                
-        word_index += 1
-        
-    if start_token == -1:
-        pass
-
-    else:
-        if start_token < final_token:
-            nerList.append([nerLabelStart, start_token, final_token+1])
-        else:
-            nerList.append([nerLabelStart, start_token])
-
-    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList, nerList
+    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList
 
 
 # Define the functions to read outputs from UDpipe
@@ -212,10 +155,10 @@ def load2TexAS(data):
     # len(end_pos) = #sentence
     # process(end_pos) = #tokens per sentences
     if package == "stanza":
-        tokens, end_pos, lemma, pos, ner = get_services_stanza(docs)
+        tokens, end_pos, lemma, pos = get_services_stanza(docs)
 
     elif package == "spacy":
-        tokens, end_pos, lemma, pos, ner = get_services_spacy(docs)
+        tokens, end_pos, lemma, pos = get_services_spacy(docs)
 
     elif package == "udpipe":
         tokens, end_pos, lemma, pos = get_services_udpipe(docs)
@@ -235,9 +178,6 @@ def load2TexAS(data):
     myTabView = tx.UITabularView(mydoc)
     myTabView.showView("LEMMA", labelCSS=False)
     myTabView.showView("POS")
-    if package == "stanza" or package == "spacy":
-        mydoc.addSpanView("NER", ner)
-        myTabView.showView("NER")
 
     # concatenate the myTabView.HTML()
     return myTabView.HTML().replace("\n", "")

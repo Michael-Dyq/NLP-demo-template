@@ -7,7 +7,7 @@ var xel_langs = {
 	"spa": "Spanish",
 	"fre": "French",
 	"ger": "German",
-	//"jpn": "Japanese"
+	"jpn": "Japanese"
 }
 
 /**
@@ -43,13 +43,11 @@ var xel_examples = {
 		"Die ganze Stadt ist ein Startup: Shenzhen ist das Silicon Valley für Hardw",
 		"Sigmund Freud war ein österreichischer Neurologe und der Begründer der Psychoanalyse, einer klinischen Methode zur Behandlung der Psychopathologie im Dialog zwischen einem Patienten und einem Psychoanalytiker. Freud wurde als Sohn galizischer jüdischer Eltern im mährischen Freiberg im österreichischen Reich geboren. Er qualifizierte sich 1881 als Doktor der Medizin an der Universität Wien. Freud lebte und arbeitete in Wien, nachdem er dort 1886 seine klinische Praxis eingerichtet hatte. 1938 verließ Freud Österreich, um der nationalsozialistischen Verfolgung zu entgehen. Er starb 1939 im britischen Exil."
 	],
-	//"jpn": [	"アップルがイギリスの新興企業を１０億ドルで購入を検討"]
+	"jpn": ["アップルがイギリスの新興企業を１０億ドルで購入を検討"]
 }
 
 function clearResults(){
-	$("#result-stanza").html( "" );
-	$("#result-spacy").html( "" );
-	$("#result-udpipe").html( "" );
+	$("#result").html( "" );
 }
 
 
