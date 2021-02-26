@@ -7,7 +7,9 @@ var xel_langs = {
 	"spa": "Spanish",
 	"fre": "French",
 	"ger": "German",
-	"jpn": "Japanese"
+	"jpn": "Japanese",
+	"ita": "Italian",
+	"dut": "Dutch"
 }
 
 /**
@@ -22,7 +24,10 @@ var xel_examples = {
 		"You can find it at N°. 1026.253.553. That is where the treasure is.",
 		"I wasn’t really ... well, what I mean...see . . . what I'm saying, the thing is . . . I didn’t mean it.",
 		"One further habit which was somewhat weakened . . . was that of combining words into self-interpreting compounds. . . . The practice was not abandoned. . . .",
-		"The Indo-European Caucus won the all-male election 58-32."
+		"The Indo-European Caucus won the all-male election 58-32.",
+		"1) The first item. 2) The second item.",
+		"1. The first item 2. The second item",
+		"1. The first item. 2. The second item."
 	],
 	"cmn": [
 		"巴拉克·奥巴马在夏威夷出生。他喜欢寿司。",
@@ -43,7 +48,9 @@ var xel_examples = {
 		"Die ganze Stadt ist ein Startup: Shenzhen ist das Silicon Valley für Hardw",
 		"Sigmund Freud war ein österreichischer Neurologe und der Begründer der Psychoanalyse, einer klinischen Methode zur Behandlung der Psychopathologie im Dialog zwischen einem Patienten und einem Psychoanalytiker. Freud wurde als Sohn galizischer jüdischer Eltern im mährischen Freiberg im österreichischen Reich geboren. Er qualifizierte sich 1881 als Doktor der Medizin an der Universität Wien. Freud lebte und arbeitete in Wien, nachdem er dort 1886 seine klinische Praxis eingerichtet hatte. 1938 verließ Freud Österreich, um der nationalsozialistischen Verfolgung zu entgehen. Er starb 1939 im britischen Exil."
 	],
-	"jpn": ["アップルがイギリスの新興企業を１０億ドルで購入を検討"]
+	"jpn": ["アップルがイギリスの新興企業を１０億ドルで購入を検討"],
+	"ita": ["Apple vuole comprare una startup del Regno Unito per un miliardo di dollari"],
+	"dut": ["Apple overweegt om voor 1 miljard een U.K. startup te kopen"]
 }
 
 function clearResults(){
@@ -120,7 +127,7 @@ function newLanguageSelect() {
  * @abstract helper function to deliver the post request
  * @yield {NULL}
  */
-async function postData(url, data_json={}, pfunction, lang, model) {
+async function postData(url, data_json={}, pfunction) {
     console.log("input: " + JSON.stringify(data_json))
     fetch(url, {
         method: 'POST',
@@ -132,7 +139,7 @@ async function postData(url, data_json={}, pfunction, lang, model) {
         //mode: 'no-cors',
         body: JSON.stringify(data_json)
 	}).then(resp => resp.json())
-		.then(json_output => {pfunction(json_output, lang, model)}
+		.then(json_output => {pfunction(json_output)}
 	);
 }
 
@@ -140,8 +147,8 @@ async function postData(url, data_json={}, pfunction, lang, model) {
  * @abstract generate the output in the HTML document
  * @yield {NULL}
  */
-function outputXEL(json, lang, model) {
-	result = document.getElementById("result-" + model)
+function outputXEL(json) {
+	result = document.getElementById("result")
 	json_string = JSON.stringify(json)
 	console.log(json_string)
 	result.innerHTML +=	json_string.substring(1, json_string.length - 1).replaceAll('\\"', '"')
@@ -153,7 +160,7 @@ function outputXEL(json, lang, model) {
  */
 function runAnnotation() {
 	fLang = document.getElementById("lang").value;
-	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger']
+	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger', 'ita', 'dut']
 	url_tokenize = "./process"
 
     if (!valid_languages.includes(fLang)) {
@@ -165,16 +172,17 @@ function runAnnotation() {
     }
 
     fText = document.getElementById("text").value;
-
+	chosen = []
 	packages = document.getElementsByTagName("input");
 	for(var i = 0; i < packages.length; i++) {
 		if(packages[i].type == "checkbox") {
 			if(packages[i].checked == true) {
-				data = { "text" : fText , "lang" : fLang , "package" : packages[i].id };
-				postData(url_tokenize, data, outputXEL, fLang, packages[i].id);
+				chosen.push(packages[i].id);
 			} 
 		}  
 	}
+	data = { "text" : fText , "lang" : fLang, "packages": chosen };
+	postData(url_tokenize, data, outputXEL);
 }
 
 /**
