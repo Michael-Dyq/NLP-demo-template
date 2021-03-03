@@ -156,6 +156,7 @@ def load2TexAS(data):
     packages = data['packages']
 
     final_HTML = ""
+    header_HTML = "<div class='title'>"
     if "stanza" in packages:
         # Initialize the TexAS document
         mydoc = tx.Document(string)
@@ -179,8 +180,8 @@ def load2TexAS(data):
         myTabView.showView("POS")
 
         # concatenate the myTabView.HTML()
-        final_HTML += "<div class='title'> Stanza: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "</div>"
-        final_HTML += myTabView.HTML().replace("\n", "")
+        header_HTML += "Stanza: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
+        final_HTML += "<div class='subtitle'>Stanza</div> <br>" + myTabView.HTML().replace("\n", "")
 
     if "spacy" in packages:
         # Initialize the TexAS document
@@ -205,8 +206,8 @@ def load2TexAS(data):
         myTabView.showView("POS")
 
         # concatenate the myTabView.HTML()
-        final_HTML += "<div class='title'> SpaCy: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "</div>"
-        final_HTML += myTabView.HTML().replace("\n", "")
+        header_HTML += "SpaCy: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
+        final_HTML += "<div class='subtitle'>SpaCy </div><br>" + myTabView.HTML().replace("\n", "")
 
     if "udpipe" in packages:
         model = model_lang_map["udpipe"][lang]
@@ -231,10 +232,11 @@ def load2TexAS(data):
         myTabView.showView("POS")
 
         # concatenate the myTabView.HTML()
-        final_HTML += "<div class='title'> UDpipe: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "</div>"
-        final_HTML += myTabView.HTML().replace("\n", "")
+        header_HTML += "UDpipe: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
+        final_HTML += "<div class='subtitle'>UDpipe</div> <br>" + myTabView.HTML().replace("\n", "")
 
-    return final_HTML
+    header_HTML += "</div>"
+    return header_HTML + "<br><br>" + final_HTML
 
     # model = model_lang_map[package][lang]
     # docs = model(string)
