@@ -5,6 +5,12 @@ var xel_langs = {
     "eng": "English",
 	"cmn": "Mandarin",
 	"spa": "Spanish",
+	"fre": "French",
+	"ger": "German",
+	"jpn": "Japanese",
+	"ita": "Italian",
+	"dut": "Dutch",
+	"prt": "Portuguese"
 }
 
 /**
@@ -13,14 +19,16 @@ var xel_langs = {
 
 var xel_examples = {
     "eng": [
-
 		"St. Michael's Church is on 5th st. near the light.",
 		"Hello world. My name is Mr. Smith. I work for the U.S. Government and I live in the U.S. I live in New York.",
 		"Mr.O'Neill thinks that the boys' stories about Chile's capital aren't amusing.",
 		"You can find it at N°. 1026.253.553. That is where the treasure is.",
 		"I wasn’t really ... well, what I mean...see . . . what I'm saying, the thing is . . . I didn’t mean it.",
 		"One further habit which was somewhat weakened . . . was that of combining words into self-interpreting compounds. . . . The practice was not abandoned. . . .",
-		"The Indo-European Caucus won the all-male election 58-32."
+		"The Indo-European Caucus won the all-male election 58-32.",
+		"1) The first item. 2) The second item.",
+		"1. The first item 2. The second item",
+		"1. The first item. 2. The second item."
 	],
 	"cmn": [
 		"巴拉克·奥巴马在夏威夷出生。他喜欢寿司。",
@@ -34,12 +42,22 @@ var xel_examples = {
 		"Barack Hussein Obama II es un político y abogado estadounidense que se desempeñó como el 44º presidente de los Estados Unidos de 2009 a 2017. Miembro del Partido Demócrata, Obama fue el primer presidente afroamericano de los Estados Unidos. Anteriormente se desempeñó como senador de Estados Unidos por Illinois de 2005 a 2008 y como senador del estado de Illinois de 1997 a 2004. ",
 		"Mohandas Karamchand Gandhi fue un abogado indio, nacionalista anticolonial y especialista en ética política, que empleó la resistencia no violenta para liderar la exitosa campaña por la independencia de la India del dominio británico y, a su vez, inspiró movimientos por los derechos civiles y la libertad en todo el mundo. El Mahātmā honorífico, que se le aplicó por primera vez en 1914 en Sudáfrica, ahora se usa en todo el mundo."
 	], 
+	"fre": [
+		"Apple cherche à acheter une start-up anglaise pour 1 milliard de dollars.",
+		"Nous avons atteint la fin du sentier."
+	],
+	"ger": [
+		"Die ganze Stadt ist ein Startup: Shenzhen ist das Silicon Valley für Hardw",
+		"Sigmund Freud war ein österreichischer Neurologe und der Begründer der Psychoanalyse, einer klinischen Methode zur Behandlung der Psychopathologie im Dialog zwischen einem Patienten und einem Psychoanalytiker. Freud wurde als Sohn galizischer jüdischer Eltern im mährischen Freiberg im österreichischen Reich geboren. Er qualifizierte sich 1881 als Doktor der Medizin an der Universität Wien. Freud lebte und arbeitete in Wien, nachdem er dort 1886 seine klinische Praxis eingerichtet hatte. 1938 verließ Freud Österreich, um der nationalsozialistischen Verfolgung zu entgehen. Er starb 1939 im britischen Exil."
+	],
+	"jpn": ["アップルがイギリスの新興企業を１０億ドルで購入を検討"],
+	"ita": ["Apple vuole comprare una startup del Regno Unito per un miliardo di dollari"],
+	"dut": ["Apple overweegt om voor 1 miljard een U.K. startup te kopen"],
+	"prt": ["Apple está querendo comprar uma startup do Reino Unido por 100 milhões de dólares."]
 }
 
 function clearResults(){
-	$("#result-stanza").html( "" );
-	$("#result-spacy").html( "" );
-	$("#result-udpipe").html( "" );
+	$("#result").html( "" );
 }
 
 
@@ -112,7 +130,7 @@ function newLanguageSelect() {
  * @abstract helper function to deliver the post request
  * @yield {NULL}
  */
-async function postData(url, data_json={}, pfunction, lang, model) {
+async function postData(url, data_json={}, pfunction) {
     console.log("input: " + JSON.stringify(data_json))
     fetch(url, {
         method: 'POST',
@@ -124,7 +142,7 @@ async function postData(url, data_json={}, pfunction, lang, model) {
         //mode: 'no-cors',
         body: JSON.stringify(data_json)
 	}).then(resp => resp.json())
-		.then(json_output => {pfunction(json_output, lang, model)}
+		.then(json_output => {pfunction(json_output)}
 	);
 }
 
@@ -132,13 +150,11 @@ async function postData(url, data_json={}, pfunction, lang, model) {
  * @abstract generate the output in the HTML document
  * @yield {NULL}
  */
-function outputXEL(json, lang, model) {
-	result = document.getElementById("result-" + model)
+function outputXEL(json) {
+	result = document.getElementById("result")
 	json_string = JSON.stringify(json)
 	console.log(json_string)
-	result.innerHTML += `<div id="${model}_${lang}_output" class="title"> Result from ${model.toUpperCase()}`
 	result.innerHTML +=	json_string.substring(1, json_string.length - 1).replaceAll('\\"', '"')
-	result.innerHTML += '</div>'
 }
 
 /**
@@ -147,11 +163,11 @@ function outputXEL(json, lang, model) {
  */
 function runAnnotation() {
 	fLang = document.getElementById("lang").value;
-	valid_languages = ['eng', 'cmn', 'spa']
+	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger', 'ita', 'dut','prt']
 	url_tokenize = "./process"
 
     if (!valid_languages.includes(fLang)) {
-        alert('Sorry! Only English, Chinese, and Spanish are supported now.');
+        alert('Sorry! Invalid language...');
         langSelectField = document.getElementById("lang");
         langSelectField.value = 'eng';
         fillExampleSelectField('eng');
@@ -159,16 +175,17 @@ function runAnnotation() {
     }
 
     fText = document.getElementById("text").value;
-
+	chosen = []
 	packages = document.getElementsByTagName("input");
 	for(var i = 0; i < packages.length; i++) {
 		if(packages[i].type == "checkbox") {
 			if(packages[i].checked == true) {
-				data = { "text" : fText , "lang" : fLang , "package" : packages[i].id };
-				postData(url_tokenize, data, outputXEL, fLang, packages[i].id);
+				chosen.push(packages[i].id);
 			} 
 		}  
 	}
+	data = { "text" : fText , "lang" : fLang, "packages": chosen };
+	postData(url_tokenize, data, outputXEL);
 }
 
 /**

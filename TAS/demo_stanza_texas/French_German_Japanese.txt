@@ -1,0 +1,32 @@
+--------------------------Spacy--------------------------
+######## French ######## :
+
+$ python3 -m spacy download fr_core_news_sm 
+
+Sentence:
+"Apple cherche à acheter une start-up anglaise pour 1 milliard de dollars."
+
+
+######## German ######## :
+
+$ python3 -m spacy download de_core_news_sm
+
+Sentence:
+"Die ganze Stadt ist ein Startup: Shenzhen ist das Silicon Valley für Hardw"
+
+"Sigmund Freud war ein österreichischer Neurologe und der Begründer der Psychoanalyse, einer klinischen Methode zur Behandlung der Psychopathologie im Dialog zwischen einem Patienten und einem Psychoanalytiker. Freud wurde als Sohn galizischer jüdischer Eltern im mährischen Freiberg im österreichischen Reich geboren. Er qualifizierte sich 1881 als Doktor der Medizin an der Universität Wien. Freud lebte und arbeitete in Wien, nachdem er dort 1886 seine klinische Praxis eingerichtet hatte. 1938 verließ Freud Österreich, um der nationalsozialistischen Verfolgung zu entgehen. Er starb 1939 im britischen Exil."
+
+######## Japanese ######## :
+
+$ python3 -m spacy download ja_core_news_sm
+
+Sentence:
+"アップルがイギリスの新興企業を１０億ドルで購入を検討"
+
+
+
+
+
+
+
+--------------------------Stanza--------------------------

@@ -179,7 +179,10 @@ class UITabularView():
             tokenIndex = c.getTokenIndex()
             # self.addSpan(annLabel,tokenType, c["label"],c["start"],c["end"])
             # self.addLinkedSpan(annLabel, tokenType = 'EDL', tokenLabel = c["label"], startToken = c["start"], endToken = c["end"], annURL = "https://en.wikipedia.org/wiki/"+spanLink)
-            self.addTokenDef(viewLabel = viewLabel, tokenType = tokenLabel, tokenLabel = tokenLabel, tokenIndex = tokenIndex, labelCSS=labelCSS )
+            if type(tokenLabel) is list:
+                self.addTokenDef(viewLabel = viewLabel, tokenType = tokenLabel[0], tokenLabel = "|".join(tokenLabel), tokenIndex = tokenIndex, labelCSS=labelCSS )
+            else:
+                self.addTokenDef(viewLabel = viewLabel, tokenType = tokenLabel, tokenLabel = tokenLabel, tokenIndex = tokenIndex, labelCSS=labelCSS )
         # print(">>" , "addtokenLabelView" , annLabel)
 
     def addSpanView(self, view, viewLabel:str, labelCSS:bool=True):
@@ -201,9 +204,9 @@ class UITabularView():
         if not self._TAS.getViews().exists(viewName):
             raise Exception("'"+viewName+"' view not found");
         view = self._TAS.getViews().get(viewName)
-        if view.getType() == "AnnotationView.TokenView":
+        if view.getTexasClass() == "tx.view.TokenView":
             self.addTokenView(view, viewLabel, labelCSS)
-        if view.getType() == "AnnotationView.SpanView":
+        if view.getTexasClass() == "tx.view.SpanView":
             self.addSpanView(view, viewLabel, labelCSS)
 
     def HTML(self):
@@ -250,6 +253,5 @@ class UITabularView():
                     html += '  </tr>\n'
 
             html += ' </table>' + '\n'
-            html += '<br>' + '\n'
             html += '</div>' + '\n'
         return html
