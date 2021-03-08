@@ -43,7 +43,8 @@ var xel_examples = {
 		"Mohandas Karamchand Gandhi fue un abogado indio, nacionalista anticolonial y especialista en ética política, que empleó la resistencia no violenta para liderar la exitosa campaña por la independencia de la India del dominio británico y, a su vez, inspiró movimientos por los derechos civiles y la libertad en todo el mundo. El Mahātmā honorífico, que se le aplicó por primera vez en 1914 en Sudáfrica, ahora se usa en todo el mundo."
 	], 
 	"fre": [
-		"Apple cherche à acheter une start-up anglaise pour 1 milliard de dollars."
+		"Apple cherche à acheter une start-up anglaise pour 1 milliard de dollars.",
+		"Nous avons atteint la fin du sentier."
 	],
 	"ger": [
 		"Die ganze Stadt ist ein Startup: Shenzhen ist das Silicon Valley für Hardw",
