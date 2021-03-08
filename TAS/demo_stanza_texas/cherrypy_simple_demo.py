@@ -230,7 +230,7 @@ def load2TexAS(data):
 
         # concatenate the myTabView.HTML()
         header_HTML += "SpaCy: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-        final_HTML += "<div class='subtitle'>SpaCy </div><br>" + myTabView.HTML().replace("\n", "")
+        final_HTML += "<div class='subtitle'>SpaCy </div><br>" + myTabView.HTML().replace("\n", "") + '<br>'
 
     if "udpipe" in packages:
         model = model_lang_map["udpipe"][lang]
