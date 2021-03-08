@@ -9,7 +9,8 @@ var xel_langs = {
 	"ger": "German",
 	"jpn": "Japanese",
 	"ita": "Italian",
-	"dut": "Dutch"
+	"dut": "Dutch",
+	"prt": "Portuguese"
 }
 
 /**
@@ -50,7 +51,8 @@ var xel_examples = {
 	],
 	"jpn": ["アップルがイギリスの新興企業を１０億ドルで購入を検討"],
 	"ita": ["Apple vuole comprare una startup del Regno Unito per un miliardo di dollari"],
-	"dut": ["Apple overweegt om voor 1 miljard een U.K. startup te kopen"]
+	"dut": ["Apple overweegt om voor 1 miljard een U.K. startup te kopen"],
+	"prt": ["Apple está querendo comprar uma startup do Reino Unido por 100 milhões de dólares."]
 }
 
 function clearResults(){
@@ -160,7 +162,7 @@ function outputXEL(json) {
  */
 function runAnnotation() {
 	fLang = document.getElementById("lang").value;
-	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger', 'ita', 'dut']
+	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger', 'ita', 'dut','prt']
 	url_tokenize = "./process"
 
     if (!valid_languages.includes(fLang)) {

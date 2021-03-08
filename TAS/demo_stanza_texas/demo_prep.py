@@ -9,7 +9,8 @@ import spacy_udpipe
 # stanza.download('de')
 # stanza.download('ja')
 # stanza.download("it")
-stanza.download("nl")
+# stanza.download("nl")
+# stanza.download("pt")
 
 # UDPIPE: download English, Chinese, and Spanish model (takes a while)
 # spacy_udpipe.download("en")
@@ -19,8 +20,8 @@ stanza.download("nl")
 # spacy_udpipe.download("de")
 # spacy_udpipe.download("ja")
 # spacy_udpipe.download("it")
-spacy_udpipe.download("nl")
-
+# spacy_udpipe.download("nl")
+# spacy_udpipe.download("pt")
 
 # SpaCy: run in command line
 # python -m spacy download en_core_web_sm
@@ -31,3 +32,4 @@ spacy_udpipe.download("nl")
 # python -m spacy download ja_core_news_sm
 # python -m spacy download it_core_news_sm
 # python -m spacy download nl_core_news_sm
+# python -m spacy download pt_core_news_sm

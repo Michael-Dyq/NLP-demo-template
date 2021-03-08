@@ -29,6 +29,7 @@ stanza_de = stanza.Pipeline('de', processors='tokenize,pos,lemma')
 stanza_ja = stanza.Pipeline('ja', processors='tokenize,pos,lemma')
 stanza_it = stanza.Pipeline('it', processors='tokenize,pos,lemma')
 stanza_nl = stanza.Pipeline('nl', processors='tokenize,pos,lemma')
+stanza_pt = stanza.Pipeline('pt', processors='tokenize,pos,lemma')
 print("Stanza model initialization ends")
 
 print("SpaCy model initialization starts")
@@ -40,6 +41,7 @@ spacy_de = spacy.load("de_core_news_sm")
 spacy_fr = spacy.load("fr_core_news_sm")
 spacy_it = spacy.load("it_core_news_sm")
 spacy_nl = spacy.load("nl_core_news_sm")
+spacy_pt = spacy.load("pt_core_news_sm")
 print("SpaCy model initialization ends")
 
 print("UDpipe model initialization starts")
@@ -51,11 +53,12 @@ udpipe_de = spacy_udpipe.load("de")
 udpipe_fr = spacy_udpipe.load("fr")
 udpipe_it = spacy_udpipe.load("it")
 udpipe_nl = spacy_udpipe.load("nl")
+udpipe_pt = spacy_udpipe.load("pt")
 print("UDpipe model initialization ends")
 
-model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl }
-model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl }
-model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl }
+model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
+model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt }
+model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt }
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
@@ -64,23 +67,38 @@ def get_services_stanza(docs):
     sentIndex = 0
     tokens = [] # score token objects
     nlpTokenList = [] # score token text
+    nlpWordsList = []
     nlpPOSList = []
     nlpLemmaList = []
     nlpSentenceEndPositions = []
+    hasCompoundWords = False
 
     for sentence in docs.sentences:
         sentIndex+=len(sentence.tokens)
         nlpSentenceEndPositions.append(sentIndex)
-        for word in sentence.words:
-            index += 1
-            nlpTokenList.append(word.text)
-            nlpPOSList.append(word.pos)
-            nlpLemmaList.append(word.lemma)
-    
         for token in sentence.tokens:
-            tokens.append(token)
+            index += 1
+            nlpTokenList.append(token.text)
+            if len(token.words) == 1:
+                # 1 word per token
+                nlpWordsList.append(None)
+                nlpPOSList.append(token.words[0].pos)
+                nlpLemmaList.append(token.words[0].lemma)
+            else:
+                # N words per token
+                hasCompoundWords = True
+                tokenWords = []
+                tokenLemmas = []
+                tokenPOStags = []
+                for word in token.words:
+                    tokenWords.append(word.text)
+                    tokenLemmas.append(word.lemma)
+                    tokenPOStags.append(word.pos)
+                nlpWordsList.append(tokenWords)
+                nlpPOSList.append(tokenPOStags)
+                nlpLemmaList.append(tokenLemmas)
 
-    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList
+    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList, nlpWordsList, hasCompoundWords
 
 # Define the functions to read outputs from SpaCy
 def get_services_spacy(docs):
@@ -165,17 +183,22 @@ def load2TexAS(data):
 
         model = model_lang_map["stanza"][lang]
         docs = model(string)
-        tokens, end_pos, lemma, pos = get_services_stanza(docs)
+        tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords = get_services_stanza(docs)
 
         mydoc.setTokenList(tokens, indexed=True)
         mydoc.views().get("TOKENS").meta().set("generator", "stanza")
         mydoc.views().get("TOKENS").meta().set("model", "stanza" + "-" + lang )
         mydoc.setSentenceList(end_pos)
+
+        if hasCompoundWords:
+            mydoc.addTokenView( "WORDS", nlpWordsList )
         mydoc.addTokenView("LEMMA", lemma)
         mydoc.addTokenView("POS", pos)
         
         # Extract HTML View
         myTabView = tx.UITabularView(mydoc)
+        if hasCompoundWords:
+            myTabView.showView("WORDS")
         myTabView.showView("LEMMA", labelCSS=False)
         myTabView.showView("POS")
 
@@ -237,41 +260,6 @@ def load2TexAS(data):
 
     header_HTML += "</div>"
     return header_HTML + "<br><br>" + final_HTML
-
-    # model = model_lang_map[package][lang]
-    # docs = model(string)
-    
-    # # if "stanza" in [], make 1 request instead of 3, change to packages
-    # # len(tokens) = #tokens
-    # # len(end_pos) = #sentence
-    # # process(end_pos) = #tokens per sentences
-    # if package == "stanza":
-    #     tokens, end_pos, lemma, pos = get_services_stanza(docs)
-
-    # elif package == "spacy":
-    #     tokens, end_pos, lemma, pos = get_services_spacy(docs)
-
-    # elif package == "udpipe":
-    #     tokens, end_pos, lemma, pos = get_services_udpipe(docs)
-
-    # else:
-    #     print("Invalid Model. Please try again...")
-    #     return
-
-    # mydoc.setTokenList(tokens, indexed=True)
-    # mydoc.views().get("TOKENS").meta().set("generator", package)
-    # mydoc.views().get("TOKENS").meta().set("model", package + "-" + lang )
-    # mydoc.setSentenceList(end_pos)
-    # mydoc.addTokenView("LEMMA", lemma)
-    # mydoc.addTokenView("POS", pos)
-    
-    # # Extract HTML View
-    # myTabView = tx.UITabularView(mydoc)
-    # myTabView.showView("LEMMA", labelCSS=False)
-    # myTabView.showView("POS")
-
-    # # concatenate the myTabView.HTML()
-    # return myTabView.HTML().replace("\n", "")
 
 class Annotation(object):
     @cherrypy.expose
