@@ -10,7 +10,8 @@ var xel_langs = {
 	"jpn": "Japanese",
 	"ita": "Italian",
 	"dut": "Dutch",
-	"prt": "Portuguese"
+	"prt": "Portuguese",
+	"ara": "Arabic"
 }
 
 /**
@@ -53,7 +54,12 @@ var xel_examples = {
 	"jpn": ["アップルがイギリスの新興企業を１０億ドルで購入を検討"],
 	"ita": ["Apple vuole comprare una startup del Regno Unito per un miliardo di dollari"],
 	"dut": ["Apple overweegt om voor 1 miljard een U.K. startup te kopen"],
-	"prt": ["Apple está querendo comprar uma startup do Reino Unido por 100 milhões de dólares."]
+	"prt": ["Apple está querendo comprar uma startup do Reino Unido por 100 milhões de dólares."],
+	"ara": [
+		"كان سيغموند فرويد طبيب أعصاب نمساويًا ومؤسس التحليل النفسي ، وهو أسلوب سريري لعلاج الأمراض النفسية من خلال الحوار بين المريض والمحلل النفسي. ولد فرويد لوالدين يهوديين من غاليسيا في بلدة فرايبرغ المورافيا في الإمبراطورية النمساوية. تأهل كطبيب في الطب عام 1881 في جامعة فيينا. عاش فرويد وعمل في فيينا ، بعد أن أسس ممارسته السريرية هناك عام 1886. في عام 1938 ، غادر فرويد النمسا هربًا من الاضطهاد النازي. توفي في المنفى في المملكة المتحدة عام 1939.",
+		"باراك حسين أوباما الثاني سياسي ومحامي أمريكي شغل منصب الرئيس الرابع والأربعين للولايات المتحدة من عام 2009 إلى عام 2017. كان أوباما عضوًا في الحزب الديمقراطي ، وكان أول رئيس أمريكي من أصل أفريقي للولايات المتحدة. شغل سابقًا منصب عضو مجلس الشيوخ الأمريكي عن ولاية إلينوي من عام 2005 إلى عام 2008 وعضو مجلس الشيوخ عن ولاية إلينوي من عام 1997 إلى عام 2004. ",
+        "مقتل عضو من هيئة علماء المسلمين خلال اقتحام القوات الاميركية منزله في بغداد (25/12/2004) بغداد (اف ب) قتل عضو من هيئة علماء المسلمين ابرز هيئة دينية للطائفة السنية خلال اقتحام القوات الاميركية الجمعة منزله في بغداد كما اكدت الهيئة في بيان اصدرته السبت."
+	]
 }
 
 function clearResults(){
@@ -163,7 +169,7 @@ function outputXEL(json) {
  */
 function runAnnotation() {
 	fLang = document.getElementById("lang").value;
-	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger', 'ita', 'dut','prt']
+	valid_languages = ['eng', 'cmn', 'spa', 'jpn', 'fre', 'ger', 'ita', 'dut','prt', 'ara']
 	url_tokenize = "./process"
 
     if (!valid_languages.includes(fLang)) {
@@ -173,6 +179,12 @@ function runAnnotation() {
         fillExampleSelectField('eng');
         return;
     }
+
+	// If the language chosen is Arabic, we unselect SpaCy
+	if (fLang == 'ara') {
+		alert("Sorry! SpaCy currently does not support Arabic");
+		document.getElementById("spacy").checked = false;
+	}
 
     fText = document.getElementById("text").value;
 	chosen = []
@@ -184,6 +196,7 @@ function runAnnotation() {
 			} 
 		}  
 	}
+
 	data = { "text" : fText , "lang" : fLang, "packages": chosen };
 	postData(url_tokenize, data, outputXEL);
 }
