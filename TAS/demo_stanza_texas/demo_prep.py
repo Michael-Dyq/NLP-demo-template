@@ -27,6 +27,7 @@ import spacy_udpipe
 
 # SpaCy: run in command line
 # python -m spacy download en_core_web_sm
+# python -m spacy download en_core_web_lg
 # python -m spacy download zh_core_web_sm
 # python -m spacy download es_core_news_sm
 # python -m spacy download fr_core_news_sm
