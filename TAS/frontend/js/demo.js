@@ -57,13 +57,6 @@ var xel_examples = {
 		"Nous avons atteint la fin du sentier.",
 		"Le comité de sécurité de l’AEM « examinera plus en détail les informations demain [mardi], et a convoqué une réunion extraordinaire le jeudi 18 mars pour statuer quant aux informations recueillies et à toute autre mesure qui pourrait s’avérer nécessaire », a ainsi déclaré à Amsterdam le régulateur européen, par voie de communiqué.",
 		"Vous êtes un(e) mordu(e) de sneakers ou bien tout simplement fan de la marque, économisez sur vos prochaines commandes grâce à nos codes promo Nike ! Agrandissez votre collection ou votre équipez vous à prix réduit. Cette semaine, voici les promotions à ne pas louper: 15% de réduc supplémentaire avec notre code promo NIke."
-		`Le musée du Louvre est un musée situé dans le 1er arrondissement de Paris, en France. 
-
-		Une préfiguration en est imaginée en 1775-1776 par le comte d'Angiviller, directeur général des Bâtiments du roi, comme lieu de présentation des chefs-d'œuvre de la collection de la Couronne. Ce musée n'a été inauguré qu'en 1793 sous l'appellation de Muséum central des arts de la République dans le palais du Louvre, ancienne résidence royale située au centre de Paris, et il est aujourd'hui le plus grand musée d'art et d'antiquités au monde. Sa surface d'exposition est de 72 735 m2.
-		
-		Fin 2016, ses collections comprenaient 554 731 œuvres, dont 35 000 exposées et 264 486 œuvres graphiques. Celles-ci présentent l'art occidental du Moyen Âge à 1848, celui des c
-		ivilisations antiques qui l'ont précédé et influencé (orientales, égyptienne, grecque, étrusque et romaine), les arts des premiers chrétiens et de l'islam.
-		`
 	],
 	"ger": [
 		"Die ganze Stadt ist ein Startup: Shenzhen ist das Silicon Valley für Hardw",
