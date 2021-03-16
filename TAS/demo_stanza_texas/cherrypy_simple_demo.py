@@ -30,10 +30,12 @@ stanza_ja = stanza.Pipeline('ja', processors='tokenize,pos,lemma')
 stanza_it = stanza.Pipeline('it', processors='tokenize,pos,lemma')
 stanza_nl = stanza.Pipeline('nl', processors='tokenize,pos,lemma')
 stanza_pt = stanza.Pipeline('pt', processors='tokenize,pos,lemma')
+stanza_ar = stanza.Pipeline('ar', processors='tokenize,pos,lemma')
 print("Stanza model initialization ends")
 
 print("SpaCy model initialization starts")
-spacy_en = spacy.load("en_core_web_sm")
+spacy_en_sm = spacy.load("en_core_web_sm")
+spacy_en_lg = spacy.load("en_core_web_lg")
 spacy_zh = spacy.load("zh_core_web_sm")
 spacy_es = spacy.load("es_core_news_sm")
 spacy_ja = spacy.load("ja_core_news_sm")
@@ -54,11 +56,12 @@ udpipe_fr = spacy_udpipe.load("fr")
 udpipe_it = spacy_udpipe.load("it")
 udpipe_nl = spacy_udpipe.load("nl")
 udpipe_pt = spacy_udpipe.load("pt")
+udpipe_ar = spacy_udpipe.load("ar")
 print("UDpipe model initialization ends")
 
-model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
-model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt }
-model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt }
+model_lang_map["spacy"] = {"eng_sm": spacy_en_sm, "eng_lg":spacy_en_lg, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
+model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt, "ara": stanza_ar }
+model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt, "ara": udpipe_ar }
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
@@ -203,39 +206,66 @@ def load2TexAS(data):
         myTabView.showView("POS")
 
         # concatenate the myTabView.HTML()
-        header_HTML += "Stanza: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-        final_HTML += "<div class='subtitle'>Stanza</div> <br>" + myTabView.HTML().replace("\n", "") + '<br>'
+        header_HTML += "Stanza-" + lang + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
+        final_HTML += "<div class='subtitle'>Stanza-" + lang + "</div> <br>" + myTabView.HTML().replace("\n", "") + '<br>'
 
     if "spacy" in packages:
         # Initialize the TexAS document
-        mydoc = tx.Document(string)
-        mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
-        mydoc.date().setTimestamp("2021-01-19T14:44")
+        if lang != 'eng':
+            mydoc = tx.Document(string)
+            mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
+            mydoc.date().setTimestamp("2021-01-19T14:44")
 
-        model = model_lang_map["spacy"][lang]
-        docs = model(string)
-        tokens, end_pos, lemma, pos = get_services_spacy(docs)
+            model = model_lang_map["spacy"][lang]
+            docs = model(string)
+            tokens, end_pos, lemma, pos = get_services_spacy(docs)
 
-        mydoc.setTokenList(tokens, indexed=True)
-        mydoc.views().get("TOKENS").meta().set("generator", "spacy")
-        mydoc.views().get("TOKENS").meta().set("model", "spacy" + "-" + lang )
-        mydoc.setSentenceList(end_pos)
-        mydoc.addTokenView("LEMMA", lemma)
-        mydoc.addTokenView("POS", pos)
+            mydoc.setTokenList(tokens, indexed=True)
+            mydoc.views().get("TOKENS").meta().set("generator", "spacy")
+            mydoc.views().get("TOKENS").meta().set("model", "spacy" + "-" + lang )
+            mydoc.setSentenceList(end_pos)
+            mydoc.addTokenView("LEMMA", lemma)
+            mydoc.addTokenView("POS", pos)
         
-        # Extract HTML View
-        myTabView = tx.UITabularView(mydoc)
-        myTabView.showView("LEMMA", labelCSS=False)
-        myTabView.showView("POS")
+            # Extract HTML View
+            myTabView = tx.UITabularView(mydoc)
+            myTabView.showView("LEMMA", labelCSS=False)
+            myTabView.showView("POS")
 
-        # concatenate the myTabView.HTML()
-        header_HTML += "SpaCy: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-        final_HTML += "<div class='subtitle'>SpaCy </div><br>" + myTabView.HTML().replace("\n", "") + '<br>'
+            # concatenate the myTabView.HTML()
+            header_HTML += "SpaCy-" + lang + " " + model.meta['name'] + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
+            final_HTML += "<div class='subtitle'>" + "SpaCy-" + lang + " " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + '<br>'
+        else:
+            for langx in ("eng_sm", "eng_lg"):
+                mydoc = tx.Document(string)
+                mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
+                mydoc.date().setTimestamp("2021-01-19T14:44")
+
+                model = model_lang_map["spacy"][langx]
+                docs = model(string)
+                tokens, end_pos, lemma, pos = get_services_spacy(docs)
+
+                mydoc.setTokenList(tokens, indexed=True)
+                mydoc.views().get("TOKENS").meta().set("generator", "spacy")
+                mydoc.views().get("TOKENS").meta().set("model", "spacy" + "-" + langx )
+                mydoc.setSentenceList(end_pos)
+                mydoc.addTokenView("LEMMA", lemma)
+                mydoc.addTokenView("POS", pos)
+            
+                # Extract HTML View
+                myTabView = tx.UITabularView(mydoc)
+                myTabView.showView("LEMMA", labelCSS=False)
+                myTabView.showView("POS")
+
+                # concatenate the myTabView.HTML()
+                header_HTML += "SpaCy-" + lang + " " + model.meta['name'] + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
+                final_HTML += "<div class='subtitle'>" + "SpaCy-" + lang + " " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + '<br>'
 
     if "udpipe" in packages:
         model = model_lang_map["udpipe"][lang]
         docs = model(string)
         tokens, end_pos, lemma, pos = get_services_udpipe(docs)
+        string = " ".join(tokens)
 
         # Initialize the TexAS document
         mydoc = tx.Document(string)
@@ -255,8 +285,8 @@ def load2TexAS(data):
         myTabView.showView("POS")
 
         # concatenate the myTabView.HTML()
-        header_HTML += "UDpipe: " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-        final_HTML += "<div class='subtitle'>UDpipe</div> <br>" + myTabView.HTML().replace("\n", "")
+        header_HTML += "UDpipe-" + lang + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
+        final_HTML += "<div class='subtitle'>UDpipe-" + lang + "</div> <br>" + myTabView.HTML().replace("\n", "")
 
     header_HTML += "</div>"
     return header_HTML + "<br><br>" + final_HTML
