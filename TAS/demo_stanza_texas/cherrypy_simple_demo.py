@@ -163,6 +163,29 @@ def get_tokens_per_sents(end_pos):
         start = end
     return res
 
+
+def get_header_table(summary_list):
+    table_HTML = '<table class=\"summary w3-panel w3-border\">'
+    table_HTML += "<tr>"
+    table_HTML += "<th class=\'w3-border w3-center\'>Model</th>"
+    table_HTML += "<th class=\'w3-border w3-center\'># of Sentences</th>"
+    table_HTML += "<th class=\'w3-border w3-center\'># of Tokens</th>"
+    table_HTML += "<th class=\'w3-border w3-center\'># Tokens per Sentence</th>"
+    table_HTML += "</tr>"
+
+
+    for model_name, num_sents, num_tokens, tokens_per_sent in summary_list:
+        table_HTML += "<tr>"
+        table_HTML += "<td class=\'w3-border w3-center\'>" + model_name
+        table_HTML += "<td class=\'w3-border w3-center\'>" + num_sents
+        table_HTML += "<td class=\'w3-border w3-center\'>" + num_tokens
+        table_HTML += "<td class=\'w3-border w3-center\'>" + tokens_per_sent
+        table_HTML += "</tr>"
+
+    table_HTML += "</table>"
+
+    return table_HTML
+
 ################################ CherryPy Layer ################################
 
 # Write a function that takes an input(string/JSON) and returns a TexAS object as output
@@ -177,7 +200,10 @@ def load2TexAS(data):
     packages = data['packages']
 
     final_HTML = ""
-    header_HTML = "<div class='title'>"
+    message_HTML = "<div class=\'message\'>"
+    isMessage = False
+    header_input = []    
+
     if "stanza" in packages:
         # Initialize the TexAS document
         mydoc = tx.Document(string)
@@ -190,7 +216,7 @@ def load2TexAS(data):
 
         mydoc.setTokenList(tokens, indexed=True)
         mydoc.views().get("TOKENS").meta().set("generator", "stanza")
-        mydoc.views().get("TOKENS").meta().set("model", "stanza" + "-" + lang )
+        mydoc.views().get("TOKENS").meta().set("model", "stanza" + "-" + lang)
         mydoc.setSentenceList(end_pos)
 
         if hasCompoundWords:
@@ -206,12 +232,16 @@ def load2TexAS(data):
         myTabView.showView("POS")
 
         # concatenate the myTabView.HTML()
-        header_HTML += "Stanza-" + lang + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-        final_HTML += "<div class='subtitle'>Stanza-" + lang + "</div> <br>" + myTabView.HTML().replace("\n", "") + '<br>'
+        header_input.append(("Stanza", str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
+        final_HTML += "<div class='subtitle'>Stanza</div> <br>" + myTabView.HTML().replace("\n", "") + "<br>"
 
     if "spacy" in packages:
-        # Initialize the TexAS document
-        if lang != 'eng':
+        # SpaCy does not support Arabic and Russian
+        if lang == 'ara' or lang == 'rus':
+            message_HTML += "SpaCy does not support Arabic or Russian. <br>"
+            isMessage = True
+
+        elif lang != 'eng':
             mydoc = tx.Document(string)
             mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
             mydoc.date().setTimestamp("2021-01-19T14:44")
@@ -233,8 +263,8 @@ def load2TexAS(data):
             myTabView.showView("POS")
 
             # concatenate the myTabView.HTML()
-            header_HTML += "SpaCy-" + lang + " " + model.meta['name'] + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-            final_HTML += "<div class='subtitle'>" + "SpaCy-" + lang + " " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + '<br>'
+            header_input.append(("SpaCy " + model.meta['name'], str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
+            final_HTML += "<div class='subtitle'>" + "SpaCy" + " " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + "<br>"
         else:
             for langx in ("eng_sm", "eng_lg"):
                 mydoc = tx.Document(string)
@@ -258,8 +288,8 @@ def load2TexAS(data):
                 myTabView.showView("POS")
 
                 # concatenate the myTabView.HTML()
-                header_HTML += "SpaCy-" + lang + " " + model.meta['name'] + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-                final_HTML += "<div class='subtitle'>" + "SpaCy-" + lang + " " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + '<br>'
+                header_input.append(("SpaCy " + model.meta['name'], str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
+                final_HTML += "<div class='subtitle'>SpaCy " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + "<br>"
 
     if "udpipe" in packages:
         model = model_lang_map["udpipe"][lang]
@@ -285,11 +315,16 @@ def load2TexAS(data):
         myTabView.showView("POS")
 
         # concatenate the myTabView.HTML()
-        header_HTML += "UDpipe-" + lang + ": " + str(len(end_pos)) + " sentences; " + str(len(tokens)) + " tokens " + str(get_tokens_per_sents(end_pos)) + "<br>"
-        final_HTML += "<div class='subtitle'>UDpipe-" + lang + "</div> <br>" + myTabView.HTML().replace("\n", "")
+        header_input.append(("UDpipe", str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
+        final_HTML += "<div class='subtitle'>UDpipe</div> <br>" + myTabView.HTML().replace("\n", "") + "<br>"
 
-    header_HTML += "</div>"
-    return header_HTML + "<br><br>" + final_HTML
+
+    message_HTML += "</div>"
+    if isMessage:
+        return message_HTML + get_header_table(header_input) + "<br><br>" + final_HTML
+
+    return get_header_table(header_input) + "<br><br>" + final_HTML
+
 
 class Annotation(object):
     @cherrypy.expose

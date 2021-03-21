@@ -220,12 +220,6 @@ function runAnnotation() {
         return;
     }
 
-	// If the language chosen is Arabic, we unselect SpaCy
-	if (fLang == 'ara') {
-		alert("Sorry! SpaCy currently does not support Arabic");
-		document.getElementById("spacy").checked = false;
-	}
-
     fText = document.getElementById("text").value;
 	chosen = []
 	packages = document.getElementsByTagName("input");

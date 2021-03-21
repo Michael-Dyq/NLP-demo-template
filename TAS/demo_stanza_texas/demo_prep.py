@@ -12,6 +12,7 @@ import spacy_udpipe
 # stanza.download("nl")
 # stanza.download("pt")
 # stanza.download("ar")
+# stanza.download('ru')
 
 # UDPIPE: download English, Chinese, and Spanish model (takes a while)
 # spacy_udpipe.download("en")
@@ -24,6 +25,7 @@ import spacy_udpipe
 # spacy_udpipe.download("nl")
 # spacy_udpipe.download("pt")
 # spacy_udpipe.download("ar")
+# spacy_udpipe.download("ru")
 
 # SpaCy: run in command line
 # python -m spacy download en_core_web_sm
