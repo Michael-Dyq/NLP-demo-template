@@ -35,8 +35,7 @@ stanza_ru = stanza.Pipeline('ru', processors='tokenize,pos,lemma')
 print("Stanza model initialization ends")
 
 print("SpaCy model initialization starts")
-spacy_en_sm = spacy.load("en_core_web_sm")
-spacy_en_lg = spacy.load("en_core_web_lg")
+spacy_en = spacy.load("en_core_web_sm")
 spacy_zh = spacy.load("zh_core_web_sm")
 spacy_es = spacy.load("es_core_news_sm")
 spacy_ja = spacy.load("ja_core_news_sm")
@@ -61,7 +60,7 @@ udpipe_ar = spacy_udpipe.load("ar")
 udpipe_ru = spacy_udpipe.load("ru")
 print("UDpipe model initialization ends")
 
-model_lang_map["spacy"] = {"eng_sm": spacy_en_sm, "eng_lg":spacy_en_lg, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
+model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
 model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt, "ara": stanza_ar, "rus": stanza_ru }
 model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt, "ara": udpipe_ar, "rus": udpipe_ru }
 
@@ -243,7 +242,7 @@ def load2TexAS(data):
             message_HTML += "SpaCy does not support Arabic or Russian. <br>"
             isMessage = True
 
-        elif lang != 'eng':
+        else:
             mydoc = tx.Document(string)
             mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
             mydoc.date().setTimestamp("2021-01-19T14:44")
@@ -267,31 +266,6 @@ def load2TexAS(data):
             # concatenate the myTabView.HTML()
             header_input.append(("SpaCy " + model.meta['name'], str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
             final_HTML += "<div class='subtitle'>" + "SpaCy" + " " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + "<br>"
-        else:
-            for langx in ("eng_sm", "eng_lg"):
-                mydoc = tx.Document(string)
-                mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
-                mydoc.date().setTimestamp("2021-01-19T14:44")
-
-                model = model_lang_map["spacy"][langx]
-                docs = model(string)
-                tokens, end_pos, lemma, pos = get_services_spacy(docs)
-
-                mydoc.setTokenList(tokens, indexed=True)
-                mydoc.views().get("TOKENS").meta().set("generator", "spacy")
-                mydoc.views().get("TOKENS").meta().set("model", "spacy" + "-" + langx )
-                mydoc.setSentenceList(end_pos)
-                mydoc.addTokenView("LEMMA", lemma)
-                mydoc.addTokenView("POS", pos)
-            
-                # Extract HTML View
-                myTabView = tx.UITabularView(mydoc)
-                myTabView.showView("LEMMA", labelCSS=False)
-                myTabView.showView("POS")
-
-                # concatenate the myTabView.HTML()
-                header_input.append(("SpaCy " + model.meta['name'], str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
-                final_HTML += "<div class='subtitle'>SpaCy " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + "<br>"
 
     if "udpipe" in packages:
         model = model_lang_map["udpipe"][lang]
