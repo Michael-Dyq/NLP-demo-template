@@ -53,7 +53,7 @@ class UITabularView():
 
     def __init__(self, TAS:TextAnnotationSchema = None):
         if not isinstance(TAS, TextAnnotationSchema):
-            raise Exception("'TAS' parameter is required to be 'TextAnnotationSchema'");
+            raise Exception("'TAS' parameter is required to be 'TextAnnotationSchema'")
         self._TAS = TAS
         self._text = self._TAS.getText()
         self._tokens = self._TAS.getTokenList()
@@ -253,5 +253,9 @@ class UITabularView():
                     html += '  </tr>\n'
 
             html += ' </table>' + '\n'
+            # 3.21 Need to add an extra line for better visualization
+            html += '<br>'
             html += '</div>' + '\n'
+
+
         return html
