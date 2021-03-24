@@ -1,6 +1,6 @@
 .message { color:red; background-color: #dba7a0; font-weight:bold; text-align: left; margin: auto; width: 100%; border: 1px solid red; padding: 10px;}
 .subtitle { color:green; background-color: #F0FFF0; font-weight:bold; text-align: left; margin: auto; width: 100%; border: 1px solid green; padding: 10px;}
-.summary { color: green; background-color: #F0FFF0}
+.summary2 { color: green; background-color: #F0FFF0}
 
 .POS-PROPN { color:#000; background-color: #b7f1f5; }
 .POS-AUX { color:#000; background-color: #95dda5; }
