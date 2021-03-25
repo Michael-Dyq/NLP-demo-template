@@ -1,8 +1,10 @@
 import os.path
 import time
+from datetime import datetime
 import json
-from typing import Text
-
+import csv
+from collections import defaultdict
+from typing import DefaultDict, Text
 from typing_extensions import final
 import cherrypy
 import texas as tx
@@ -60,9 +62,11 @@ udpipe_pt = spacy_udpipe.load("pt")
 # udpipe_ru = spacy_udpipe.load("ru")
 print("UDpipe model initialization ends")
 
+
 model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
 model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt } #, "ara": stanza_ar, "rus": stanza_ru }
 model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt } #, "ara": udpipe_ar, "rus": udpipe_ru }
+
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
@@ -187,6 +191,13 @@ def get_header_table(summary_list):
 
     return table_HTML
 
+
+def writeLog(row):
+    # Initialize the log.csv
+    with open('log.csv','a') as f:
+        writer=csv.writer(f)
+        writer.writerow(row)
+
 ################################ CherryPy Layer ################################
 
 # Write a function that takes an input(string/JSON) and returns a TexAS object as output
@@ -203,7 +214,8 @@ def load2TexAS(data):
     final_HTML = ""
     message_HTML = "<div class=\'message\'>"
     isMessage = False
-    header_input = []    
+    header_input = []
+    log_row = [datetime.now().strftime('%Y-%m-%d %H:%M:%S'), lang]
 
     if "stanza" in packages:
         # Initialize the TexAS document
@@ -235,6 +247,10 @@ def load2TexAS(data):
         # concatenate the myTabView.HTML()
         header_input.append(("Stanza", str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
         final_HTML += "<div class='subtitle'>Stanza</div> <br>" + myTabView.HTML().replace("\n", "") + "<br>"
+        log_row.append("stanza")
+    
+    else:
+        log_row.append("")
 
     if "spacy" in packages:
         # SpaCy does not support Arabic and Russian
@@ -264,8 +280,12 @@ def load2TexAS(data):
             myTabView.showView("POS")
 
             # concatenate the myTabView.HTML()
-            header_input.append(("SpaCy " + model.meta['name'], str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
-            final_HTML += "<div class='subtitle'>" + "SpaCy" + " " + model.meta['name'] + "</div><br>" + myTabView.HTML().replace("\n", "") + "<br>"
+            header_input.append(("SpaCy", str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
+            final_HTML += "<div class='subtitle'>" + "SpaCy" + "</div><br>" + myTabView.HTML().replace("\n", "") + "<br>"
+        log_row.append("spacy")
+    
+    else:
+        log_row.append("")
 
     if "udpipe" in packages:
         model = model_lang_map["udpipe"][lang]
@@ -293,12 +313,16 @@ def load2TexAS(data):
         # concatenate the myTabView.HTML()
         header_input.append(("UDpipe", str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
         final_HTML += "<div class='subtitle'>UDpipe</div> <br>" + myTabView.HTML().replace("\n", "") + "<br>"
-
+        log_row.append("udpipe")
+    
+    else:
+        log_row.append("")
 
     message_HTML += "</div>"
     if isMessage:
         return message_HTML + get_header_table(header_input) + "<br><br>" + final_HTML
 
+    writeLog(log_row)
     return get_header_table(header_input) + "<br><br>" + final_HTML
 
 
