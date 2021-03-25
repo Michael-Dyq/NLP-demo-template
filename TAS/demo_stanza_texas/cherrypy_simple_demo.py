@@ -198,7 +198,9 @@ def writeLog(row):
         writer=csv.writer(f)
         writer.writerow(row)
 
+
 ################################ CherryPy Layer ################################
+
 
 # Write a function that takes an input(string/JSON) and returns a TexAS object as output
 def load2TexAS(data):
@@ -362,6 +364,7 @@ class Annotation(object):
        
         result = load2TexAS(data) 
         return result
+
 
 if __name__ == '__main__':
     
