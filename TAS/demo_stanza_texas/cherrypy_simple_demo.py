@@ -30,8 +30,8 @@ stanza_ja = stanza.Pipeline('ja', processors='tokenize,pos,lemma')
 stanza_it = stanza.Pipeline('it', processors='tokenize,pos,lemma')
 stanza_nl = stanza.Pipeline('nl', processors='tokenize,pos,lemma')
 stanza_pt = stanza.Pipeline('pt', processors='tokenize,pos,lemma')
-stanza_ar = stanza.Pipeline('ar', processors='tokenize,pos,lemma')
-stanza_ru = stanza.Pipeline('ru', processors='tokenize,pos,lemma')
+# stanza_ar = stanza.Pipeline('ar', processors='tokenize,pos,lemma')
+# stanza_ru = stanza.Pipeline('ru', processors='tokenize,pos,lemma')
 print("Stanza model initialization ends")
 
 print("SpaCy model initialization starts")
@@ -56,13 +56,13 @@ udpipe_fr = spacy_udpipe.load("fr")
 udpipe_it = spacy_udpipe.load("it")
 udpipe_nl = spacy_udpipe.load("nl")
 udpipe_pt = spacy_udpipe.load("pt")
-udpipe_ar = spacy_udpipe.load("ar")
-udpipe_ru = spacy_udpipe.load("ru")
+# udpipe_ar = spacy_udpipe.load("ar")
+# udpipe_ru = spacy_udpipe.load("ru")
 print("UDpipe model initialization ends")
 
 model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
-model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt, "ara": stanza_ar, "rus": stanza_ru }
-model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt, "ara": udpipe_ar, "rus": udpipe_ru }
+model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt } #, "ara": stanza_ar, "rus": stanza_ru }
+model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt } #, "ara": udpipe_ar, "rus": udpipe_ru }
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
@@ -166,21 +166,21 @@ def get_tokens_per_sents(end_pos):
 
 
 def get_header_table(summary_list):
-    table_HTML = '<table class=\"summary w3-panel w3-border\">'
+    table_HTML = '<table class=\"summary\" cellspacing=\"10\">'
     table_HTML += "<tr>"
-    table_HTML += "<th class=\'w3-border w3-center\'>Model</th>"
-    table_HTML += "<th class=\'w3-border w3-center\'># of Sentences</th>"
-    table_HTML += "<th class=\'w3-border w3-center\'># of Tokens</th>"
-    table_HTML += "<th class=\'w3-border w3-center\'># Tokens per Sentence</th>"
+    table_HTML += "<th class=\'w3-center\'>package</th>"
+    table_HTML += "<th class=\'w3-center\'>#sentences</th>"
+    table_HTML += "<th class=\'w3-center\'>#tokens</th>"
+    table_HTML += "<th class=\'w3-center\'>#tokens/sentence</th>"
     table_HTML += "</tr>"
 
 
     for model_name, num_sents, num_tokens, tokens_per_sent in summary_list:
         table_HTML += "<tr>"
-        table_HTML += "<td class=\'w3-border w3-center\'>" + model_name
-        table_HTML += "<td class=\'w3-border w3-center\'>" + num_sents
-        table_HTML += "<td class=\'w3-border w3-center\'>" + num_tokens
-        table_HTML += "<td class=\'w3-border w3-center\'>" + tokens_per_sent
+        table_HTML += "<td class=\'w3-center\'>" + model_name
+        table_HTML += "<td class=\'w3-center\'>" + num_sents
+        table_HTML += "<td class=\'w3-center\'>" + num_tokens
+        table_HTML += "<td class=\'w3-center\'>" + tokens_per_sent
         table_HTML += "</tr>"
 
     table_HTML += "</table>"
