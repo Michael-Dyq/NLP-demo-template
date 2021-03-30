@@ -67,6 +67,18 @@ model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "f
 model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt, "ara": stanza_ar, "rus": stanza_ru }
 model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt, "ara": udpipe_ar, "rus": udpipe_ru }
 
+################################ Cache Loading ################################
+with open('/cache/cache_stanza.json') as file_obj:
+    cache_stanza = json.load(file_obj)
+
+
+with open('/cache/cache_spacy.json') as file_obj:
+    cache_spacy = json.load(file_obj)
+
+
+with open('/cache/cache_udpipe.json') as file_obj:
+    cache_udpipe = json.load(file_obj)
+
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
@@ -225,10 +237,28 @@ def load2TexAS(data):
         mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
         mydoc.date().setTimestamp("2021-01-19T14:44")
 
-        model = model_lang_map["stanza"][lang]
-        docs = model(string)
-        tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords = get_services_stanza(docs)
-
+        ## Check text whether is already in cache
+        if string in cache_stanza[lang].keys():
+            tokens = cache_stanza[lang][string]['tokens']
+            end_pos = cache_stanza[lang][string]['end_pos']
+            lemma = cache_stanza[lang][string]['lemma']
+            pos = cache_stanza[lang][string]['pos']
+            nlpWordsList = cache_stanza[lang][string]['nlpWordsList']
+            hasCompoundWords = cache_stanza[lang][string]['hasCompoundWords']
+            print("--------------This information is loaded from cache_stanza--------------")
+        else:
+            model = model_lang_map["stanza"][lang]
+            docs = model(string)
+            tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords = get_services_stanza(docs)
+            cache_stanza[lang][string] = {}
+            cache_stanza[lang][string]['tokens'] = tokens
+            cache_stanza[lang][string]['end_pos'] = end_pos
+            cache_stanza[lang][string]['lemma'] = lemma
+            cache_stanza[lang][string]['pos'] = pos
+            cache_stanza[lang][string]['nlpWordsList'] = nlpWordsList
+            cache_stanza[lang][string]['hasCompoundWords'] = hasCompoundWords
+            print("--------------This information is not include in cache_stanza--------------")
+            
         mydoc.setTokenList(tokens, indexed=True)
         mydoc.views().get("TOKENS").meta().set("generator", "stanza")
         mydoc.views().get("TOKENS").meta().set("model", "stanza" + "-" + lang)
@@ -265,9 +295,23 @@ def load2TexAS(data):
             mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
             mydoc.date().setTimestamp("2021-01-19T14:44")
 
-            model = model_lang_map["spacy"][lang]
-            docs = model(string)
-            tokens, end_pos, lemma, pos = get_services_spacy(docs)
+            ## Check text whether is already in cache
+            if string in cache_spacy[lang].keys():
+                tokens = cache_spacy[lang][string]['tokens']
+                end_pos = cache_spacy[lang][string]['end_pos']
+                lemma = cache_spacy[lang][string]['lemma']
+                pos = cache_spacy[lang][string]['pos']
+                print("--------------This information is loaded from cache_spacy--------------")
+            else:
+                model = model_lang_map["spacy"][lang]
+                docs = model(string)
+                tokens, end_pos, lemma, pos = get_services_spacy(docs)
+                cache_spacy[lang][string] = {}
+                cache_spacy[lang][string]['tokens'] = tokens
+                cache_spacy[lang][string]['end_pos'] = end_pos
+                cache_spacy[lang][string]['lemma'] = lemma
+                cache_spacy[lang][string]['pos'] = pos
+                print("--------------This information is not included in cache_spacy--------------")
 
             mydoc.setTokenList(tokens, indexed=True)
             mydoc.views().get("TOKENS").meta().set("generator", "spacy")
@@ -290,10 +334,26 @@ def load2TexAS(data):
         log_row.append("")
 
     if "udpipe" in packages:
-        model = model_lang_map["udpipe"][lang]
-        docs = model(string)
-        tokens, end_pos, lemma, pos = get_services_udpipe(docs)
-        string = " ".join(tokens)
+        ## Check text whether is already in cache
+        if string in cache_udpipe[lang].keys():
+            tokens = cache_udpipe[lang][string]['tokens']
+            end_pos = cache_udpipe[lang][string]['end_pos']
+            lemma = cache_udpipe[lang][string]['lemma']
+            pos = cache_udpipe[lang][string]['pos']
+            print("--------------This information is loaded from cache_udpipe--------------")
+        else:
+            model = model_lang_map["udpipe"][lang]
+            docs = model(string)
+            tokens, end_pos, lemma, pos = get_services_udpipe(docs)
+            cache_udpipe[lang][string] = {}
+            cache_udpipe[lang][string]['tokens'] = tokens
+            cache_udpipe[lang][string]['end_pos'] = end_pos
+            cache_udpipe[lang][string]['lemma'] = lemma
+            cache_udpipe[lang][string]['pos'] = pos
+            
+            print("--------------This information is not included in cache_udpipe--------------")
+
+        #string = " ".join(tokens)
 
         # Initialize the TexAS document
         mydoc = tx.Document(string)
