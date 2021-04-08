@@ -354,6 +354,7 @@ def load2TexAS(data):
         else:
             tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords, cache_stanza = cache.add("stanza", cache_stanza, lang, string, get_services_stanza)
 
+
         mydoc.setTokenList(tokens, indexed=True)
         mydoc.views().get("TOKENS").meta().set("generator", "stanza")
         mydoc.views().get("TOKENS").meta().set("model", "stanza" + "-" + lang)
@@ -400,6 +401,7 @@ def load2TexAS(data):
             else:
                 tokens, end_pos, lemma, pos, cache_spacy = cache.add("spacy", cache_spacy, lang, string, get_services_spacy)
 
+
             mydoc.setTokenList(tokens, indexed=True)
             mydoc.views().get("TOKENS").meta().set("generator", "spacy")
             mydoc.views().get("TOKENS").meta().set("model", "spacy" + "-" + lang )
@@ -421,6 +423,7 @@ def load2TexAS(data):
         log_row.append("")
 
     if "udpipe" in packages:
+
         ## If cache is full, reload the cache.
         if cache.count(cache_udpipe) > 100:
             cache_udpipe = cache.load("udpipe")

@@ -141,14 +141,17 @@ udpipe_ar = spacy_udpipe.load("ar")
 udpipe_ru = spacy_udpipe.load("ru")
 print("UDpipe model initialization ends")
 
+
 print("Trankit model initialization starts")
 trankit_en = trankit.Pipeline("english")
 print("Trankit model initialization ends")
+
 
 model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
 model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt, "ara": stanza_ar, "rus": stanza_ru }
 model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt, "ara": udpipe_ar, "rus": udpipe_ru }
 model_lang_map["trankit"] = {"eng": trankit_en}
+
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
 def get_services_stanza(docs):
@@ -235,6 +238,7 @@ def get_services_udpipe(docs):
         nlpLemmaList.append(token.lemma_)
 
     return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList
+
 
 def get_services_trankit(docs):
     index = -1
