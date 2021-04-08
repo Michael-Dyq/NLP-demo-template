@@ -11,12 +11,96 @@ import texas as tx
 import stanza
 import spacy_udpipe
 import spacy
+import trankit
 
 # TODO: LRU Cache (Time to live)
 # models = {"stanza":{}, "spacy":{} }
 # models[stanza] = {"en":None, "es": None …}
 # stanza_models = {"en":None, "es": None …}
 # stanza_models["en"] = stanza.Pipeline("en")
+
+################################ Cache Class ##################################
+class Cache:
+
+  def __init__(self, map):
+    self.map = map
+
+
+  def load(self, name):
+    '''
+    name(str): stanza, spacy, udpipe and trankit
+    map: a dictionary which maps a language to its corresponding model
+    '''
+    try:
+        with open('cache/cache_' + name + '.json') as file_obj:
+            cache = json.load(file_obj)
+        print("Load cache_" + name + " successfully from cache_stanza.json.")
+    except:
+        cache = {}
+        for lang in self.map[name].keys():
+            cache[lang] = {}
+        print("Cannot find cache_" + name + ".json and an empty new nested dictionary for cache_" + name + " is created.")
+    return cache
+
+
+  def read(self, name, cache_dic, lang, string):
+    if name == 'stanza':
+      tokens = cache_dic[lang][string]['tokens']
+      end_pos = cache_dic[lang][string]['end_pos']
+      lemma = cache_dic[lang][string]['lemma']
+      pos = cache_dic[lang][string]['pos']
+      nlpWordsList = cache_dic[lang][string]['nlpWordsList']
+      hasCompoundWords = cache_dic[lang][string]['hasCompoundWords']
+      print("--------------The annotations is loaded from cache_" + name + "--------------")
+
+      return tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords
+    
+    else:
+      tokens = cache_dic[lang][string]['tokens']
+      end_pos = cache_dic[lang][string]['end_pos']
+      lemma = cache_dic[lang][string]['lemma']
+      pos = cache_dic[lang][string]['pos']
+      print("--------------The annotations is loaded from cache_" + name + "--------------")
+
+      return tokens, end_pos, lemma, pos
+
+
+  def add(self, name, cache_dic, lang, string, get_services): 
+    '''
+    get_services: funtion to produce annotations. Eg: get_services_stanza
+    '''
+    if name == 'stanza':
+      model = self.map[name][lang]
+      docs = model(string)
+      tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords = get_services(docs)
+      cache_dic[lang][string] = {}
+      cache_dic[lang][string]['tokens'] = tokens
+      cache_dic[lang][string]['end_pos'] = end_pos
+      cache_dic[lang][string]['lemma'] = lemma
+      cache_dic[lang][string]['pos'] = pos
+      cache_dic[lang][string]['nlpWordsList'] = nlpWordsList
+      cache_dic[lang][string]['hasCompoundWords'] = hasCompoundWords
+      print("--------------The annotations is not included in cache_" + name + "--------------")
+
+      return tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords, cache_dic
+
+    else:
+      model = self.map[name][lang]
+      docs = model(string)
+      tokens, end_pos, lemma, pos = get_services(docs)
+      cache_dic[lang][string] = {}
+      cache_dic[lang][string]['tokens'] = tokens
+      cache_dic[lang][string]['end_pos'] = end_pos
+      cache_dic[lang][string]['lemma'] = lemma
+      cache_dic[lang][string]['pos'] = pos
+      print("--------------The annotations is not included in cache_" + name + "--------------")
+
+      return tokens, end_pos, lemma, pos, cache_dic
+
+  def count(self, cache_dic):
+    num = sum([len(cache_dic[key]) for key in cache_dic.keys()])
+
+    return num
 
 ################################ Model Loading ################################
 print("Initialization starts")
@@ -62,11 +146,23 @@ udpipe_ar = spacy_udpipe.load("ar")
 udpipe_ru = spacy_udpipe.load("ru")
 print("UDpipe model initialization ends")
 
+print("Trankit model initialization starts")
+trankit_en = trankit.Pipeline("english")
+print("Trankit model initialization ends")
 
 model_lang_map["spacy"] = {"eng": spacy_en, "cmn": spacy_zh, "spa": spacy_es, "fre": spacy_fr, "ger": spacy_de, "jpn": spacy_ja, "ita" : spacy_it, "dut": spacy_nl, "prt": spacy_pt }
 model_lang_map["stanza"] = {"eng": stanza_en, "cmn": stanza_zh, "spa": stanza_es, "fre": stanza_fr, "ger": stanza_de, "jpn": stanza_ja, "ita" : stanza_it, "dut": stanza_nl, "prt": stanza_pt, "ara": stanza_ar, "rus": stanza_ru }
 model_lang_map["udpipe"] = {"eng": udpipe_en, "cmn": udpipe_zh, "spa": udpipe_es, "fre": udpipe_fr, "ger": udpipe_de, "jpn": udpipe_ja, "ita" : udpipe_it, "dut": udpipe_nl , "prt": udpipe_pt, "ara": udpipe_ar, "rus": udpipe_ru }
+model_lang_map["trankit"] = {"eng": trankit_en}
 
+################################ Cache Loading ################################
+# Instantiate Cache Class
+cache = Cache(model_lang_map)
+        
+cache_stanza = cache.load("stanza")
+cache_spacy = cache.load("spacy")
+cache_udpipe = cache.load("udpipe")
+cache_trankit = cache.load('trankit')
 
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
@@ -102,9 +198,9 @@ def get_services_stanza(docs):
                     tokenWords.append(word.text)
                     tokenLemmas.append(word.lemma)
                     tokenPOStags.append(word.pos)
-                nlpWordsList.append(tokenWords)
-                nlpPOSList.append(tokenPOStags)
-                nlpLemmaList.append(tokenLemmas)
+                nlpWordsList.append(["NULL" if i==None else i for i in tokenWords])
+                nlpPOSList.append(["NULL" if i==None else i for i in tokenPOStags])
+                nlpLemmaList.append(["NULL" if i==None else i for i in tokenLemmas])
 
     return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList, nlpWordsList, hasCompoundWords
 
@@ -153,6 +249,28 @@ def get_services_udpipe(docs):
 
     return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList
 
+# Define the functions to read outputs from Trankit
+def get_services_trankit(docs):
+    index = -1
+    sentIndex = 0
+    nlpTokenList = []
+    nlpPOSList = []
+    nlpLemmaList = []
+    nlpSentenceEndPositions = []
+    #nlpNerList = []
+
+    for anno_dic in docs["sentences"]:
+        sentIndex += len(anno_dic["tokens"])
+        nlpSentenceEndPositions.append(sentIndex)
+
+        for token_dic in anno_dic["tokens"]:
+            index += 1
+            nlpTokenList.append(token_dic["text"])
+            nlpPOSList.append(token_dic["upos"])
+            nlpLemmaList.append(token_dic["lemma"])
+            #nlpNerList.append([token_dic["ner"])
+
+    return nlpTokenList, nlpSentenceEndPositions, nlpLemmaList, nlpPOSList
 
 for package_key in model_lang_map:
     for lang_key in model_lang_map[package_key]:
@@ -201,13 +319,14 @@ def writeLog(row):
 
 ################################ CherryPy Layer ################################
 
-
 # Write a function that takes an input(string/JSON) and returns a TexAS object as output
 def load2TexAS(data):
     """
     Converting the output of your annotation service to TexAS.
     In this case, our service is tokenization and sentence separation
     """
+    # State global variable
+    global cache_stanza, cache_spacy, cache_udpipe, cache_trankit
     # Collect the data
     string = data['text']
     lang = data['lang']
@@ -225,9 +344,15 @@ def load2TexAS(data):
         mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
         mydoc.date().setTimestamp("2021-01-19T14:44")
 
-        model = model_lang_map["stanza"][lang]
-        docs = model(string)
-        tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords = get_services_stanza(docs)
+        ## If cache is full, reload the cache.
+        if cache.count(cache_stanza) > 100:
+            cache_stanza = cache.load("stanza")
+        
+        ## Check text whether is already in cache
+        if string in cache_stanza[lang].keys():
+            tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords = cache.read("stanza", cache_stanza, lang, string)
+        else:
+            tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords, cache_stanza = cache.add("stanza", cache_stanza, lang, string, get_services_stanza)
 
         mydoc.setTokenList(tokens, indexed=True)
         mydoc.views().get("TOKENS").meta().set("generator", "stanza")
@@ -265,9 +390,15 @@ def load2TexAS(data):
             mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
             mydoc.date().setTimestamp("2021-01-19T14:44")
 
-            model = model_lang_map["spacy"][lang]
-            docs = model(string)
-            tokens, end_pos, lemma, pos = get_services_spacy(docs)
+            ## If cache is full, reload the cache.
+            if cache.count(cache_spacy) > 100:
+                cache_spacy = cache.load("spacy")
+            
+            ## Check text whether is already in cache
+            if string in cache_spacy[lang].keys():
+                tokens, end_pos, lemma, pos = cache.read("spacy", cache_spacy, lang, string)
+            else:
+                tokens, end_pos, lemma, pos, cache_spacy = cache.add("spacy", cache_spacy, lang, string, get_services_spacy)
 
             mydoc.setTokenList(tokens, indexed=True)
             mydoc.views().get("TOKENS").meta().set("generator", "spacy")
@@ -290,13 +421,20 @@ def load2TexAS(data):
         log_row.append("")
 
     if "udpipe" in packages:
-        model = model_lang_map["udpipe"][lang]
-        docs = model(string)
-        tokens, end_pos, lemma, pos = get_services_udpipe(docs)
-        string = " ".join(tokens)
+        ## If cache is full, reload the cache.
+        if cache.count(cache_udpipe) > 100:
+            cache_udpipe = cache.load("udpipe")
+        
+        ## Check text whether is already in cache
+        if string in cache_udpipe[lang].keys():
+            tokens, end_pos, lemma, pos = cache.read("udpipe", cache_udpipe, lang, string)
+        else:
+            tokens, end_pos, lemma, pos, cache_udpipe = cache.add("udpipe", cache_udpipe, lang, string, get_services_udpipe)
+           
+        string_udpipe = " ".join(tokens)
 
         # Initialize the TexAS document
-        mydoc = tx.Document(string)
+        mydoc = tx.Document(string_udpipe)
         mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
         mydoc.date().setTimestamp("2021-01-19T14:44")
 
@@ -316,6 +454,47 @@ def load2TexAS(data):
         header_input.append(("UDpipe", str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
         final_HTML += "<div class='subtitle'>UDpipe</div> <br>" + myTabView.HTML().replace("\n", "") + "<br>"
         log_row.append("udpipe")
+    
+    else:
+        log_row.append("")
+
+    if "trankit" in packages:
+        # trankit temporarily only support english
+        if lang == 'eng':
+            mydoc = tx.Document(string)
+            mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
+            mydoc.date().setTimestamp("2021-01-19T14:44")
+            
+            ## If cache is full, reload the cache.
+            if cache.count(cache_trankit) > 100:
+                cache_trankit = cache.load("trankit")
+            
+            ## Check text whether is already in cache
+            if string in cache_trankit[lang].keys():
+                tokens, end_pos, lemma, pos = cache.read("trankit", cache_trankit, lang, string)
+            else:
+                tokens, end_pos, lemma, pos, cache_trankit = cache.add("trankit", cache_trankit, lang, string, get_services_trankit)
+                        
+            mydoc.setTokenList(tokens, indexed=True)
+            mydoc.views().get("TOKENS").meta().set("generator", "spacy")
+            mydoc.views().get("TOKENS").meta().set("model", "spacy" + "-" + lang )
+            mydoc.setSentenceList(end_pos)
+            mydoc.addTokenView("LEMMA", lemma)
+            mydoc.addTokenView("POS", pos)
+        
+            # Extract HTML View
+            myTabView = tx.UITabularView(mydoc)
+            myTabView.showView("LEMMA", labelCSS=False)
+            myTabView.showView("POS")
+
+            # concatenate the myTabView.HTML()
+            header_input.append(("Trankit", str(len(end_pos)) , str(len(tokens)), str(get_tokens_per_sents(end_pos))))
+            final_HTML += "<div class='subtitle'>" + "Trankit" + "</div><br>" + myTabView.HTML().replace("\n", "") + "<br>"
+            log_row.append("trankit")
+
+        else:
+            message_HTML += "Trankit temporarily only supports English. <br>"
+            isMessage = True             
     
     else:
         log_row.append("")
