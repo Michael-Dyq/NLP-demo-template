@@ -17,7 +17,7 @@ import trankit
 # models = {"stanza":{}, "spacy":{} }
 # models[stanza] = {"en":None, "es": None …}
 # stanza_models = {"en":None, "es": None …}
-# stanza_models["en"] = stanza.Pipeline("en")
+# stanza_models["en"] = stanza.Pipeline("en") 
 
 ################################ Cache Class ##################################
 class Cache:
@@ -163,7 +163,7 @@ cache_stanza = cache.load("stanza")
 cache_spacy = cache.load("spacy")
 cache_udpipe = cache.load("udpipe")
 cache_trankit = cache.load('trankit')
-
+  
 ################################ Processor Functions ################################
 # Define the functions to read outputs from STANZA
 def get_services_stanza(docs):
@@ -315,8 +315,8 @@ def writeLog(row):
     with open('log.csv','a') as f:
         writer=csv.writer(f)
         writer.writerow(row)
-
-
+        
+        
 ################################ CherryPy Layer ################################
 
 # Write a function that takes an input(string/JSON) and returns a TexAS object as output
@@ -353,8 +353,7 @@ def load2TexAS(data):
             tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords = cache.read("stanza", cache_stanza, lang, string)
         else:
             tokens, end_pos, lemma, pos, nlpWordsList, hasCompoundWords, cache_stanza = cache.add("stanza", cache_stanza, lang, string, get_services_stanza)
-
-
+            
         mydoc.setTokenList(tokens, indexed=True)
         mydoc.views().get("TOKENS").meta().set("generator", "stanza")
         mydoc.views().get("TOKENS").meta().set("model", "stanza" + "-" + lang)
@@ -390,7 +389,7 @@ def load2TexAS(data):
             mydoc = tx.Document(string)
             mydoc.meta().set("authors","hegler,yiwen,celine,yuqian")
             mydoc.date().setTimestamp("2021-01-19T14:44")
-
+            
             ## If cache is full, reload the cache.
             if cache.count(cache_spacy) > 100:
                 cache_spacy = cache.load("spacy")
@@ -400,8 +399,7 @@ def load2TexAS(data):
                 tokens, end_pos, lemma, pos = cache.read("spacy", cache_spacy, lang, string)
             else:
                 tokens, end_pos, lemma, pos, cache_spacy = cache.add("spacy", cache_spacy, lang, string, get_services_spacy)
-
-
+            
             mydoc.setTokenList(tokens, indexed=True)
             mydoc.views().get("TOKENS").meta().set("generator", "spacy")
             mydoc.views().get("TOKENS").meta().set("model", "spacy" + "-" + lang )
@@ -422,8 +420,7 @@ def load2TexAS(data):
     else:
         log_row.append("")
 
-    if "udpipe" in packages:
-
+    if "udpipe" in packages:       
         ## If cache is full, reload the cache.
         if cache.count(cache_udpipe) > 100:
             cache_udpipe = cache.load("udpipe")
@@ -433,7 +430,7 @@ def load2TexAS(data):
             tokens, end_pos, lemma, pos = cache.read("udpipe", cache_udpipe, lang, string)
         else:
             tokens, end_pos, lemma, pos, cache_udpipe = cache.add("udpipe", cache_udpipe, lang, string, get_services_udpipe)
-           
+        
         string_udpipe = " ".join(tokens)
 
         # Initialize the TexAS document
@@ -460,7 +457,7 @@ def load2TexAS(data):
     
     else:
         log_row.append("")
-
+    
     if "trankit" in packages:
         # trankit temporarily only support english
         if lang == 'eng':
